@@ -4,7 +4,7 @@
 using System.Data.SqlClient;
 using Iris;
 
-public static void Run(string myEventHubMessage, TraceWriter log)
+public static void Run(ImageMessage myEventHubMessage, TraceWriter log)
 {
     var connection = new SqlConnection("Server=tcp:indro.database.windows.net,1433;Initial Catalog=dispatchDb;Persist Security Info=False;User ID=troy;Password=IndroRobotics1!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
 
@@ -19,7 +19,6 @@ public static void Run(string myEventHubMessage, TraceWriter log)
 
     insertImages.ExecuteNonQuery();
 
-
     log.Info("[Debug]");
     log.Info("+++++++++++++++");
 
@@ -32,4 +31,24 @@ public static void Run(string myEventHubMessage, TraceWriter log)
     log.Info("+++++++++++++++");
 
     connection.Close();
+}
+
+
+/*
+func run RecognizeImage -c "{'DeviceName':'drone1','BlobURI':'https://indrostorage.blob.core.windows.net/images/drone1_2017_1_24_13_43_24.png','Latitude':48.877199999999995,'Longitude':-123.4228}"
+*/
+public class ImageMessage
+{
+    public string DeviceName { get; set; }
+
+    public string BlobURI { get; set; }
+
+    public double Latitude { get; set; }
+
+    public double Longitude { get; set; }
+
+    public override string ToString()
+    {
+        return $"{DeviceName} {BlobURI} {Latitude} {Longitude}";
+    }
 }
