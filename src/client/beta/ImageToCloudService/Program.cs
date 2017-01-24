@@ -1,4 +1,9 @@
-﻿using System;
+﻿/*
+ *Expects filename in pattern latitude,longitude.ext
+ * such as: 48.839541,-123.459589.png
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -65,33 +70,87 @@ namespace ImageToCloudService
             DirectoryInfo dirImages = new DirectoryInfo(args[0]);
             while (true)
             {
-                var dirs = dirImages.GetFiles("*.png");
-                foreach (FileInfo f in dirs)
+                var files = dirImages.GetFiles("*.png");
+                foreach (FileInfo f in files)
                 {
 
                     Console.WriteLine("About to upload file {0}", f.Name);
 
-                    var cloudBlockBlob = container.GetBlockBlobReference(getBlobName());
-                    cloudBlockBlob.UploadFromFile(f.FullName);
-                    Console.WriteLine("Uploaded file {0}", f.Name);
+                    try
+                    {
+                        var cloudBlockBlob = container.GetBlockBlobReference(getBlobName(f));
+                        cloudBlockBlob.UploadFromFile(f.FullName);
+                        Console.WriteLine("Uploaded file {0}", f.Name);
 
-                    Console.WriteLine("Sending message to IoT");
-                    IoTMessage msg = new IoTMessage() {blobURI= cloudBlockBlob.StorageUri.PrimaryUri.AbsoluteUri, latitude=0.0, longitude=0.0, deviceName=ConfigurationManager.AppSettings["deviceName"] };
-                    var msgString = JsonConvert.SerializeObject(msg);
-                    var msgOut = new Message(Encoding.ASCII.GetBytes(msgString));
-                    client.SendEventAsync(msgOut).Wait();
-                    Console.WriteLine("Sent message to IoT");
+                        Console.WriteLine("Sending message to IoT");
+                        IoTMessage msg = new IoTMessage() {
+                            blobURI = cloudBlockBlob.StorageUri.PrimaryUri.AbsoluteUri,
+                            latitude = getLatitude(f),
+                            longitude = getLongitude(f),
+                            deviceName = ConfigurationManager.AppSettings["deviceName"] };
+                        var msgString = JsonConvert.SerializeObject(msg);
+                        var msgOut = new Message(Encoding.ASCII.GetBytes(msgString));
+                        client.SendEventAsync(msgOut).Wait();
+                        Console.WriteLine("Sent message to IoT");
 
-                    f.Delete();
+                        f.Delete();
+                    }
+                    catch (System.IO.IOException e)
+                    {
+                        Console.WriteLine(e.Message);
+                        Console.WriteLine("File in use..  skipping");
+                    }
 
 
                 }
             }
         }
-        static string getBlobName() {
+        static string getBlobName(FileInfo f) {
 
-            var blobName = String.Format($"{ConfigurationManager.AppSettings["deviceName"]}_{DateTime.Now.Year}_{DateTime.Now.Month}_{DateTime.Now.Day}_{DateTime.Now.Hour}_{DateTime.Now.Minute}_{DateTime.Now.Second}");
+            var blobName = String.Format($"{ConfigurationManager.AppSettings["deviceName"]}_{DateTime.Now.Year}_{DateTime.Now.Month}_{DateTime.Now.Day}_{DateTime.Now.Hour}_{DateTime.Now.Minute}_{DateTime.Now.Second}{f.Extension}");
             return blobName;
+        }
+
+        static double getLatitude(FileInfo f)
+        {
+            string fileName = f.Name;
+            fileName = fileName.Replace(f.Extension, "");
+
+            if (fileName.Contains(","))
+            {
+                try
+                {
+                    return Double.Parse(fileName.Split(',')[0]);
+                } catch
+                {
+                    return 0.0;
+                }
+            } else
+            {
+                return 0.0;
+            }
+        }
+
+        static double getLongitude(FileInfo f)
+        {
+            string fileName = f.Name;
+            fileName = fileName.Replace(f.Extension, "");
+
+            if (fileName.Contains(","))
+            {
+                try
+                {
+                    return Double.Parse(fileName.Split(',')[1]);
+                }
+                catch
+                {
+                    return 0.0;
+                }
+            }
+            else
+            {
+                return 0.0;
+            }
         }
     }
 }
