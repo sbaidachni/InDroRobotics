@@ -4,13 +4,13 @@
       "name": "myBlob",
       "type": "blobTrigger",
       "direction": "in",
-      "path": "samples-workitems/{name}",
+      "path": "images/{name}",
       "connection": "AzureWebJobsDashboard"
     },
     {
       "type": "blob",
       "name": "outputBlob",
-      "path": "outcontainer/{rand-guid}",
+      "path": "thumb/{rand-guid}",
       "connection": "AzureWebJobsDashboard",
       "direction": "out"
     }
