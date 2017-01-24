@@ -1,7 +1,7 @@
 {
   "bindings": [
     {
-      "name": "inStream",
+      "name": "original",
       "type": "blobTrigger",
       "direction": "in",
       "path": "images/{name}",

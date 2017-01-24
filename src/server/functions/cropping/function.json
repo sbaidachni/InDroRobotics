@@ -1,7 +1,7 @@
 {
   "bindings": [
     {
-      "name": "inStream",
+      "name": "original",
       "type": "blobTrigger",
       "direction": "in",
       "path": "images/{name}",
@@ -9,7 +9,7 @@
     },
     {
       "type": "blob",
-      "name": "outStream",
+      "name": "resized",
       "path": "thumbnails/{name}",
       "connection": "ImageRepository",
       "direction": "out"
