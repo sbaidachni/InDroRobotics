@@ -5,7 +5,7 @@ using System;
 using System.Drawing;
 using ImageProcessor;
 
-public static void Run(Stream inStream, Stream resized, TraceWriter log)
+public static void Run(Stream original, Stream resized, TraceWriter log)
 {
     using (var imageFactory = new ImageFactory())
     {
