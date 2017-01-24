@@ -5,13 +5,13 @@
       "type": "blobTrigger",
       "direction": "in",
       "path": "frames/{name}",
-      "connection": "AzureWebJobsDashboard"
+      "connection": "ImageRepository"
     },
     {
       "type": "blob",
       "name": "output",
       "path": "thumb/{rand-guid}",
-      "connection": "AzureWebJobsDashboard",
+      "connection": "ImageRepository",
       "direction": "out"
     }
   ],
