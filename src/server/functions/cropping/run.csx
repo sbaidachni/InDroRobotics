@@ -4,13 +4,13 @@ using System;
 using System.Drawing;
 using ImageProcessor;
 
-public static void Run(Stream inputImage, Stream outputImage, TraceWriter log)
+public static void Run(Stream original, Stream resized, TraceWriter log)
 {
     using (var imageFactory = new ImageFactory())
     {
         imageFactory
-            .Load(inputImage)
+            .Load(original)
             .Resize(new Size(100, 100))
-            .Save(outputImage);
+            .Save(resized);
     }
 }
