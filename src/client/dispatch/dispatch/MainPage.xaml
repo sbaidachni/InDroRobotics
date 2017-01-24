@@ -4,7 +4,7 @@
              xmlns:local="clr-namespace:App2"
              x:Class="App2.MainPage">
 
-	<Label Text="Welcome to Xamarin Forms!" 
+	<Label Text="in Dro, like a b0$$" 
            VerticalOptions="Center" 
            HorizontalOptions="Center" />
 
