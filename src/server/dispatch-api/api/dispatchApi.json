@@ -1,0 +1,17 @@
+{
+  "get": {
+    "access": "authenticated"
+  },
+  "post": {
+    "access": "authenticated"
+  },
+  "put": {
+    "access": "authenticated"
+  },
+  "patch": {
+    "access": "authenticated"
+  },
+  "delete": {
+    "access": "authenticated"
+  }
+}
