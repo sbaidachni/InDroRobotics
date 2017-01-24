@@ -6,6 +6,13 @@
       "direction": "in",
       "path": "samples-workitems/{name}",
       "connection": "AzureWebJobsDashboard"
+    },
+    {
+      "type": "blob",
+      "name": "outputBlob",
+      "path": "outcontainer/{rand-guid}",
+      "connection": "AzureWebJobsDashboard",
+      "direction": "out"
     }
   ],
   "disabled": false
