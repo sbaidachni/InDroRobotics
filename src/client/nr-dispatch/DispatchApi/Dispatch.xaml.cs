@@ -1,21 +1,22 @@
 ﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace DispatchApi
 {
-    public partial class TodoList : ContentPage
+    public partial class Dispatch : ContentPage
     {
         // Track whether the user has authenticated.
         bool authenticated = false;
 
-        TodoItemManager manager;
+        DispatchManager manager;
 
-        public TodoList()
+        public Dispatch()
         {
             InitializeComponent();
 
-            manager = TodoItemManager.DefaultManager;
+            manager = DispatchManager.DefaultManager;
 
             // OnPlatform<T> doesn't currently support the "Windows" target platform, so we have this check here.
             if (manager.IsOfflineEnabled &&
@@ -47,6 +48,22 @@ namespace DispatchApi
                 this.loginButton.IsVisible = false;
             }
         }
+
+        public async void OnAddImage(object sender, EventArgs e)
+        {
+            await AddImage();
+        }
+
+        // Data methods
+        async Task AddImage()
+        {
+            var m = manager.CurrentClient.CurrentUser.MobileServiceAuthenticationToken;
+
+            var v = await manager.CurrentClient.InvokeApiAsync("tables/images", HttpMethod.Get, null);
+
+            
+        }
+
 
         // Data methods
         async Task AddItem(TodoItem item)

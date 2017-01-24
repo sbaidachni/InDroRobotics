@@ -23,9 +23,9 @@ using Microsoft.WindowsAzure.MobileServices.Sync;
 
 namespace DispatchApi
 {
-    public partial class TodoItemManager
+    public partial class DispatchManager
     {
-        static TodoItemManager defaultInstance = new TodoItemManager();
+        static DispatchManager defaultInstance = new DispatchManager();
         MobileServiceClient client;
 
 #if OFFLINE_SYNC_ENABLED
@@ -36,7 +36,7 @@ namespace DispatchApi
 
         const string offlineDbPath = @"localstore.db";
 
-        private TodoItemManager()
+        private DispatchManager()
         {
             this.client = new MobileServiceClient(Constants.ApplicationURL);
 
@@ -53,7 +53,7 @@ namespace DispatchApi
 #endif
         }
 
-        public static TodoItemManager DefaultManager
+        public static DispatchManager DefaultManager
         {
             get
             {
