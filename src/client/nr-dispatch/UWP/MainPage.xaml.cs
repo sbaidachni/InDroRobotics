@@ -119,7 +119,7 @@ namespace UWP
                 // Sign in with Windows Azure Active Directory using a server-managed flow.
                 if (user == null)
                 {
-                    user = await TodoItemManager.DefaultManager.CurrentClient
+                    user = await DispatchManager.DefaultManager.CurrentClient
                         .LoginAsync(MobileServiceAuthenticationProvider.WindowsAzureActiveDirectory);
                     if (user != null)
                     {

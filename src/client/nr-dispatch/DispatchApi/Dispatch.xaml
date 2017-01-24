@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <ContentPage 	xmlns="http://xamarin.com/schemas/2014/forms" 
 				xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
-				x:Class="DispatchApi.TodoList"
+				x:Class="DispatchApi.Dispatch"
 				Title="Azure Todo">
   <Grid RowSpacing="0">
     <Grid.RowDefinitions>
@@ -32,10 +32,26 @@
         </StackLayout>
       </Grid>
     </StackLayout>
+
+    <StackLayout Grid.Row="1" BackgroundColor="#5ABAFF" Padding="10,30,10,5">
+      <Label TextColor="#555555" Text="Azure App Service" />
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <StackLayout x:Name="ImagePanel" Grid.Column="0" Orientation="Horizontal" HorizontalOptions="StartAndExpand">
+          <Button Text="GET AN IMAGE!"
+                  MinimumHeightRequest="30"
+                  Clicked="OnAddImage" />
+        </StackLayout>
+      </Grid>
+    </StackLayout>
+    
     <ListView x:Name="todoList"
 				ItemSelected="OnSelected"
 				IsPullToRefreshEnabled="true" Refreshing="OnRefresh"
-				Grid.Row="1">
+				Grid.Row="2">
       <ListView.ItemTemplate>
         <DataTemplate>
           <ViewCell>
