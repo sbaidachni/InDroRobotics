@@ -7,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Windows.UI.Xaml.Media.Imaging;
 using Xamarin.Forms;
 
 namespace DispatchApi
@@ -61,7 +60,7 @@ namespace DispatchApi
 
                 return _Image;
             }
-=
+
         }
 
 
