@@ -2,6 +2,7 @@
 #r "Iris.SDK.Evaluation.dll"
 
 using System.Data.SqlClient;
+using Iris;
 
 public static void Run(string myEventHubMessage, TraceWriter log)
 {

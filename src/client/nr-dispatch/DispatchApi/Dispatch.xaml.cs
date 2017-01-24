@@ -157,8 +157,16 @@ namespace DispatchApi
                 authenticated = await App.Authenticator.Authenticate();
 
             // Set syncItems to true to synchronize the data on startup when offline is enabled.
+            // Refresh items only when authenticated.
             if (authenticated == true)
+            {
+                // Set syncItems to true in order to synchronize the data
+                // on startup when running in offline mode.
                 await RefreshItems(true, syncItems: false);
+
+                // Hide the Sign-in button.
+                this.loginButton.IsVisible = false;
+            }
         }
 
         private class ActivityIndicatorScope : IDisposable
