@@ -1,0 +1,14 @@
+{
+  "bindings": [
+    {
+      "type": "eventHubTrigger",
+      "name": "myEventHubMessage",
+      "direction": "in",
+      "path": "iothub-ehub-indrohub-106950-5da0552708",
+      "connection": "indroEHConnection",
+      "consumerGroup": "$Default"
+    }
+  ],
+  "disabled": false
+}
+
