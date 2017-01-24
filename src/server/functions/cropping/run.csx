@@ -1,4 +1,5 @@
 #r "System.Drawing"
+#r "ImageProcessor"
 
 using System;
 using System.Drawing;
