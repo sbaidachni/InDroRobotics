@@ -34,7 +34,6 @@ namespace UWP
 
             // Initialize the authenticator before loading the app.
             DispatchApi.App.Init(this);
-
             LoadApplication(new DispatchApi.App());
         }
 

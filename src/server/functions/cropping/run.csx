@@ -1,26 +1,17 @@
-#r "System.IO"
+#r "System.Drawing"
 #r "ImageProcessor"
 
 using System;
-using System.IO;
+using System.Drawing;
 using ImageProcessor;
-using ImageProcessor.Imaging.Formats;
 
-public static void Run(Stream inStream, string name, TraceWriter log)
+public static void Run(Stream inStream, Stream resized, TraceWriter log)
 {
-    //var format = new JpegFormat { Quality = 70 };
-    //var size = new Size(150, 0);
-
-    // using (var outStream = new MemoryStream()) //PUSH to Output
-    // {
-    //     // Initialize the ImageFactory using the overload to preserve EXIF metadata.
-    //     using (var imageFactory = new ImageFactory(preserveExifData:true))
-    //     {
-    //         // Load, resize, set the format and quality and save an image.
-    //         imageFactory.Load(inStream)
-    //                     .Resize(size)
-    //                     .Format(format)
-    //                     .Save(outStream);
-    //     }
-    // }
+    using (var imageFactory = new ImageFactory())
+    {
+        imageFactory
+            .Load(original)
+            .Resize(new Size(100, 100))
+            .Save(resized);
+    }
 }
