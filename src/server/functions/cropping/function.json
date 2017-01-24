@@ -1,17 +1,17 @@
 {
   "bindings": [
     {
-      "name": "myBlob",
+      "name": "original",
       "type": "blobTrigger",
       "direction": "in",
       "path": "images/{name}",
-      "connection": "AzureWebJobsDashboard"
+      "connection": "ImageRepository"
     },
     {
       "type": "blob",
-      "name": "outputBlob",
-      "path": "thumb/{rand-guid}",
-      "connection": "AzureWebJobsDashboard",
+      "name": "resized",
+      "path": "thumbnails/{name}",
+      "connection": "ImageRepository",
       "direction": "out"
     }
   ],

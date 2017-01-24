@@ -1,11 +1,11 @@
 {
   "bindings": [
     {
-      "name": "myBlob",
+      "name": "original",
       "type": "blobTrigger",
       "direction": "in",
-      "path": "samples-workitems/{name}",
-      "connection": "AzureWebJobsDashboard"
+      "path": "images/{name}",
+      "connection": "ImageRepository"
     }
   ],
   "disabled": false
