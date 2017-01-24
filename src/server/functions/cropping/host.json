@@ -1,11 +1,18 @@
 {
   "bindings": [
     {
-      "name": "myBlob",
+      "name": "inStream",
       "type": "blobTrigger",
       "direction": "in",
-      "path": "samples-workitems/{name}",
+      "path": "frames/{name}",
       "connection": "AzureWebJobsDashboard"
+    },
+    {
+      "type": "blob",
+      "name": "output",
+      "path": "thumb/{rand-guid}",
+      "connection": "AzureWebJobsDashboard",
+      "direction": "out"
     }
   ],
   "disabled": false
