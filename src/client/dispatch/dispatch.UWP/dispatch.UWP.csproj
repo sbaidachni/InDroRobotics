@@ -7,8 +7,8 @@
     <ProjectGuid>{E83BE9CE-8952-4107-8AAD-E0BA99F9FEA7}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>App2.UWP</RootNamespace>
-    <AssemblyName>App2.UWP</AssemblyName>
+    <RootNamespace>dispatch.UWP</RootNamespace>
+    <AssemblyName>dispatch.UWP</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion>10.0.14393.0</TargetPlatformVersion>
@@ -130,7 +130,7 @@
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
-  <Import Project="..\App2\App2.projitems" Label="Shared" Condition="Exists('..\App2\App2.projitems')" />
+  <Import Project="..\dispatch\dispatch.projitems" Label="Shared" Condition="Exists('..\dispatch\dispatch.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
