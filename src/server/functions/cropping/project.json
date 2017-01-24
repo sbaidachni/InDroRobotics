@@ -1,10 +1,9 @@
 {
   "frameworks": {
-    "net461": {
+    "net46":{
       "dependencies": {
-        "System.IO": "*",
-        "ImageProcessor": "*"
+        "ImageProcessor": "2.4.5"
       }
     }
-  }
+   }
 }

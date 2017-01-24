@@ -1,4 +1,5 @@
 #r "System.Data"
+#r "Iris.SDK.Evalutation.dll"
 
 using System.Data.SqlClient;
 
