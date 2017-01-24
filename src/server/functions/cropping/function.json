@@ -4,13 +4,13 @@
       "name": "inputImage",
       "type": "blobTrigger",
       "direction": "in",
-      "path": "thumbnailimages",
+      "path": "images/{name}",
       "connection": "ImageRepository"
     },
     {
       "type": "blob",
       "name": "outputImage",
-      "path": "thumbnailimagesresized/{rand-guid}",
+      "path": "thumbnails/{name}",
       "connection": "ImageRepository",
       "direction": "out"
     }
