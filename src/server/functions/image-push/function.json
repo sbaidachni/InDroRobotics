@@ -4,7 +4,7 @@
       "name": "original",
       "type": "blobTrigger",
       "direction": "in",
-      "path": "images/{name}",
+      "path": "thumbnails/{name}",
       "connection": "ImageRepository"
     }
   ],
