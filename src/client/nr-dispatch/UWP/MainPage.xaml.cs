@@ -34,8 +34,10 @@ namespace UWP
 
             // Initialize the authenticator before loading the app.
             DispatchApi.App.Init(this);
-
+            DispatchManager.DefaultManager.
             LoadApplication(new DispatchApi.App());
+
+
         }
 
         // Define a authenticated user.
