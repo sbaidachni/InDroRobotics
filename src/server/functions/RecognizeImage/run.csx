@@ -10,14 +10,25 @@ public static void Run(string myEventHubMessage, TraceWriter log)
 
     connection.Open();
 
+    var insertImages = new SqlCommand("insert into images (uri) values (@uri)", connection);
+
+    insertImages.Parameters.AddRange(new SqlParameter[]
+    {
+        new SqlParameter("uri", "Foo")
+    });
+
+    insertImages.ExecuteNonQuery();
+
+
     log.Info("[Debug]");
     log.Info("+++++++++++++++");
-    var queryString = @"select count(*) from drones";
-    var command = new SqlCommand(queryString, connection);
-    var result = command.ExecuteScalar();
-    log.Info($"C# Event Hub trigger function processed a message: {connection.ConnectionString}");
-    log.Info(myEventHubMessage);
-    log.Info($"{queryString} : {result}");
+
+    var imageCountQuery = @"select count(*) from images";
+    var imageCountCmd = new SqlCommand(imageCountQuery, connection);
+    var imageCountResult = imageCountCmd.ExecuteScalar();
+    log.Info($"{nameof(imageCountQuery)} : {imageCountResult}");
+    log.Info("---");
+    log.Info($"{nameof(myEventHubMessage)}: {myEventHubMessage}");
     log.Info("+++++++++++++++");
 
     connection.Close();
