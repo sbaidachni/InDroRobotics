@@ -1,0 +1,19 @@
+{
+  "bindings": [
+    {
+      "name": "inStream",
+      "type": "blobTrigger",
+      "direction": "in",
+      "path": "frames/{name}",
+      "connection": "ImageRepository"
+    },
+    {
+      "type": "blob",
+      "name": "output",
+      "path": "thumb/{name}",
+      "connection": "ImageRepository",
+      "direction": "out"
+    }
+  ],
+  "disabled": false
+}

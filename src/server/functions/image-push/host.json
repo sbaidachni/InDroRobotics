@@ -1,11 +1,11 @@
 {
   "bindings": [
     {
-      "name": "myBlob",
+      "name": "inStream",
       "type": "blobTrigger",
       "direction": "in",
-      "path": "samples-workitems/{name}",
-      "connection": "AzureWebJobsDashboard"
+      "path": "iamges/{name}",
+      "connection": "ImageRepository"
     }
   ],
   "disabled": false
