@@ -1,7 +1,9 @@
+#r "System.IO"
+#r "ImageProcessor"
+
 using System;
 using System.IO;
 using ImageProcessor;
-using ImageProcessor.Configuration;
 using ImageProcessor.Imaging.Formats;
 
 public static void Run(Stream inStream, string name, TraceWriter log)
