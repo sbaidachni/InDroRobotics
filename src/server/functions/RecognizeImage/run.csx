@@ -4,7 +4,7 @@
 using System.Data.SqlClient;
 using Iris;
 
-public static void Run(ImageMessage myEventHubMessage, TraceWriter log)
+public static void Run(EventHubMessage eventHubMessage, TraceWriter log)
 {
     var connection = new SqlConnection("Server=tcp:indro.database.windows.net,1433;Initial Catalog=dispatchDb;Persist Security Info=False;User ID=troy;Password=IndroRobotics1!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
 
@@ -14,7 +14,11 @@ public static void Run(ImageMessage myEventHubMessage, TraceWriter log)
 
     insertImages.Parameters.AddRange(new SqlParameter[]
     {
-        new SqlParameter("uri", "Foo")
+        new SqlParameter("uri", eventHubMessage.BlobURI),
+        new SqlParameter("thumbnailUri", string.Empty), // this will be by convention
+        new SqlParameter("latitude", eventHubMessage.Latitude),
+        new SqlParameter("longitude", eventHubMessage.Longitude),
+        new SqlParameter("droneId", eventHubMessage.DeviceName),
     });
 
     insertImages.ExecuteNonQuery();
@@ -27,7 +31,7 @@ public static void Run(ImageMessage myEventHubMessage, TraceWriter log)
     var imageCountResult = imageCountCmd.ExecuteScalar();
     log.Info($"{nameof(imageCountQuery)} : {imageCountResult}");
     log.Info("---");
-    log.Info($"{nameof(myEventHubMessage)}: {myEventHubMessage}");
+    log.Info($"{nameof(eventHubMessage)}: {eventHubMessage}");
     log.Info("+++++++++++++++");
 
     connection.Close();
@@ -37,7 +41,7 @@ public static void Run(ImageMessage myEventHubMessage, TraceWriter log)
 /*
 func run RecognizeImage -c "{'DeviceName':'drone1','BlobURI':'https://indrostorage.blob.core.windows.net/images/drone1_2017_1_24_13_43_24.png','Latitude':48.877199999999995,'Longitude':-123.4228}"
 */
-public class ImageMessage
+public class EventHubMessage
 {
     public string DeviceName { get; set; }
 
