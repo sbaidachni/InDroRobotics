@@ -18,3 +18,9 @@ public static void Run(string myEventHubMessage, TraceWriter log)
     log.Info($"{queryString} : {result}");
     log.Info("+++++++++++++++");
 }
+
+
+class IoTMessage
+{
+    public string test;
+}
