@@ -10,11 +10,11 @@ public static void Run(string myEventHubMessage, TraceWriter log)
 
     connection.Open();
 
+    log.Info("[Debug]");
+    log.Info("+++++++++++++++");
     var queryString = @"select count(*) from drones";
     var command = new SqlCommand(queryString, connection);
     var result = command.ExecuteScalar();
-
-    log.Info("+++++++++++++++");
     log.Info($"C# Event Hub trigger function processed a message: {connection.ConnectionString}");
     log.Info(myEventHubMessage);
     log.Info($"{queryString} : {result}");
