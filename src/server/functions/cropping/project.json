@@ -3,7 +3,7 @@
     "net461": {
       "dependencies": {
         "System.IO": "*",
-        "ImageProcessor":"*"
+        "ImageProcessor": "*"
       }
     }
   }
