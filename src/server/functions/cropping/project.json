@@ -1,12 +1,9 @@
 {
   "frameworks": {
-    "net461": {
+    "net46":{
       "dependencies": {
-        "Newtonsoft.Json": "9.0.1",
-        "Microsoft.Rest.ClientRuntime": "2.3.4",
-        "System.Data": "*",
-        "ImageProcessor":"2.5.1"
+        "ImageProcessor": "2.4.5"
       }
     }
-  }
+   }
 }
