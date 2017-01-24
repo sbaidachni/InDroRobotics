@@ -5,9 +5,6 @@
         "MCSC_functions_name": {
             "type": "string",
             "defaultValue": "mcsc-cf-functions"
-        },
-        "AzureWebJobsServiceBus": {
-            "type": "string"
         }
     },
     "variables": {},
@@ -22,14 +19,6 @@
                 "siteConfig": {
                     "phpVersion": "off",
                     "appSettings": [
-                        {
-                            "Name": "AzureWebJobsServiceBus",
-                            "Value": "[parameters('AzureWebJobsServiceBus')]"
-                        },
-                        {
-                            "Name": "WEBSITE_NODE_DEFAULT_VERSION",
-                            "Value": "4.4.7"
-                        }
                     ]
                 }
             }
