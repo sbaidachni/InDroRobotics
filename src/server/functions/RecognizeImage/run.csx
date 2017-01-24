@@ -15,11 +15,14 @@ public static void Run(string myEventHubMessage, TraceWriter log)
     var command = new SqlCommand(queryString, connection);
     var result = command.ExecuteScalar();
 
+    var message = new string('+', int.MaxValue);
+
     log.Info("+++++++++++++++");
     log.Info($"C# Event Hub trigger function processed a message: {connection.ConnectionString}");
     log.Info(myEventHubMessage);
     log.Info($"{queryString} : {result}");
     log.Info("+++++++++++++++");
+    log.Info(message);
 
     connection.Close();
 }
