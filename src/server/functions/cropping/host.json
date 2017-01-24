@@ -10,7 +10,7 @@
     {
       "type": "blob",
       "name": "output",
-      "path": "thumb/{rand-guid}",
+      "path": "thumb/{name}",
       "connection": "ImageRepository",
       "direction": "out"
     }
