@@ -1,15 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Blend for Visual Studio 14
+# Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "App2", "dispatch\App2\App2.shproj", "{E7C80112-004E-497D-A74E-3C7E112B56EB}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "dispatch", "dispatch\App2\dispatch.shproj", "{E7C80112-004E-497D-A74E-3C7E112B56EB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App2.Droid", "dispatch\App2.Droid\App2.Droid.csproj", "{5202DE9D-D28D-4A6E-BAA6-B078EE35FC87}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dispatch.Droid", "dispatch\App2.Droid\dispatch.Droid.csproj", "{5202DE9D-D28D-4A6E-BAA6-B078EE35FC87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App2.iOS", "dispatch\App2.iOS\App2.iOS.csproj", "{43B3779B-F6D3-4F62-AEAC-A05E56663866}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dispatch.iOS", "dispatch\App2.iOS\dispatch.iOS.csproj", "{43B3779B-F6D3-4F62-AEAC-A05E56663866}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App2.UWP", "dispatch\App2.UWP\App2.UWP.csproj", "{E83BE9CE-8952-4107-8AAD-E0BA99F9FEA7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dispatch.UWP", "dispatch\App2.UWP\dispatch.UWP.csproj", "{E83BE9CE-8952-4107-8AAD-E0BA99F9FEA7}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
