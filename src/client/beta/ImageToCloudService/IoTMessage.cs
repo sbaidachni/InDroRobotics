@@ -9,6 +9,9 @@ namespace ImageToCloudService
 {
     public class IoTMessage
     {
+        [JsonProperty("DeviceName")]
+        public string deviceName;
+
         [JsonProperty("BlobURI")]
         public string blobURI;
 

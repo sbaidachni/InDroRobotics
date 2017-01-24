@@ -76,7 +76,7 @@ namespace ImageToCloudService
                     Console.WriteLine("Uploaded file {0}", f.Name);
 
                     Console.WriteLine("Sending message to IoT");
-                    IoTMessage msg = new IoTMessage() {blobURI= cloudBlockBlob.StorageUri.PrimaryUri.AbsoluteUri, latitude=0.0, longitude=0.0 };
+                    IoTMessage msg = new IoTMessage() {blobURI= cloudBlockBlob.StorageUri.PrimaryUri.AbsoluteUri, latitude=0.0, longitude=0.0, deviceName=ConfigurationManager.AppSettings["deviceName"] };
                     var msgString = JsonConvert.SerializeObject(msg);
                     var msgOut = new Message(Encoding.ASCII.GetBytes(msgString));
                     client.SendEventAsync(msgOut).Wait();
