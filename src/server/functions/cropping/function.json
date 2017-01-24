@@ -1,16 +1,16 @@
 {
   "bindings": [
     {
-      "name": "inStream",
+      "name": "inputImage",
       "type": "blobTrigger",
       "direction": "in",
-      "path": "frames/{name}",
+      "path": "thumbnailimages",
       "connection": "ImageRepository"
     },
     {
       "type": "blob",
-      "name": "output",
-      "path": "thumb/{name}",
+      "name": "outputImage",
+      "path": "thumbnailimagesresized/{rand-guid}",
       "connection": "ImageRepository",
       "direction": "out"
     }

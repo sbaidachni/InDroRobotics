@@ -1,11 +1,3 @@
-/*
- * To add Offline Sync Support:
- *  1) Add the NuGet package Microsoft.Azure.Mobile.Client.SQLiteStore (and dependencies) to all client projects
- *  2) Uncomment the #define OFFLINE_SYNC_ENABLED
- *
- * For more information, see: http://go.microsoft.com/fwlink/?LinkId=620342
- */
-//#define OFFLINE_SYNC_ENABLED
 
 using System;
 using System.Collections.Generic;
@@ -16,11 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.WindowsAzure.MobileServices;
 
-#if OFFLINE_SYNC_ENABLED
-using Microsoft.WindowsAzure.MobileServices.SQLiteStore;
-using Microsoft.WindowsAzure.MobileServices.Sync;
-#endif
-
 namespace DispatchApi
 {
     public partial class DispatchManager
@@ -28,29 +15,13 @@ namespace DispatchApi
         static DispatchManager defaultInstance = new DispatchManager();
         MobileServiceClient client;
 
-#if OFFLINE_SYNC_ENABLED
-        IMobileServiceSyncTable<TodoItem> todoTable;
-#else
-        IMobileServiceTable<TodoItem> todoTable;
-#endif
-
-        const string offlineDbPath = @"localstore.db";
+        IMobileServiceTable<Image> imageTable;
 
         private DispatchManager()
         {
             this.client = new MobileServiceClient(Constants.ApplicationURL);
 
-#if OFFLINE_SYNC_ENABLED
-            var store = new MobileServiceSQLiteStore(offlineDbPath);
-            store.DefineTable<TodoItem>();
-
-            //Initializes the SyncContext using the default IMobileServiceSyncHandler.
-            this.client.SyncContext.InitializeAsync(store);
-
-            this.todoTable = client.GetSyncTable<TodoItem>();
-#else
-            this.todoTable = client.GetTable<TodoItem>();
-#endif
+            this.imageTable = client.GetTable<Image>();
         }
 
         public static DispatchManager DefaultManager
@@ -72,24 +43,18 @@ namespace DispatchApi
 
         public bool IsOfflineEnabled
         {
-            get { return todoTable is Microsoft.WindowsAzure.MobileServices.Sync.IMobileServiceSyncTable<TodoItem>; }
+            get { return imageTable is Microsoft.WindowsAzure.MobileServices.Sync.IMobileServiceSyncTable<Image>; }
         }
 
-        public async Task<ObservableCollection<TodoItem>> GetTodoItemsAsync(bool syncItems = false)
+        public async Task<ObservableCollection<Image>> GetImagesAsync(bool syncItems = false)
         {
             try
             {
-#if OFFLINE_SYNC_ENABLED
-                if (syncItems)
-                {
-                    await this.SyncAsync();
-                }
-#endif
-                IEnumerable<TodoItem> items = await todoTable
-                    .Where(todoItem => !todoItem.Done)
+                IEnumerable<Image> images = await imageTable
+                    .Where(image => !image.Deleted)
                     .ToEnumerableAsync();
 
-                return new ObservableCollection<TodoItem>(items);
+                return new ObservableCollection<Image>(images);
             }
             catch (MobileServiceInvalidOperationException msioe)
             {
@@ -102,15 +67,33 @@ namespace DispatchApi
             return null;
         }
 
-        public async Task SaveTaskAsync(TodoItem item)
+        public async Task SaveTaskAsync(Image item)
         {
             if (item.Id == null)
             {
-                await todoTable.InsertAsync(item);
+                await imageTable.InsertAsync(item);
             }
             else
             {
-                await todoTable.UpdateAsync(item);
+                await imageTable.UpdateAsync(item);
+            }
+        }
+
+        public async Task SaveTaskAsync(IEnumerable<Image> items)
+        {
+            if (items != null && items.Count() > 0)
+            {
+                foreach (var i in items)
+                {
+                    if (i.Id == null)
+                    {
+                        await imageTable.InsertAsync(i);
+                    }
+                    else
+                    {
+                        await imageTable.UpdateAsync(i);
+                    }
+                }
             }
         }
 
