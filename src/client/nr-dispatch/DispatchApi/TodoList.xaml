@@ -27,6 +27,8 @@
           <Button Text="+"
                   MinimumHeightRequest="30"
                   Clicked="OnAdd" />
+          <Button x:Name="loginButton" Text="Sign-in" MinimumHeightRequest="30"
+                  Clicked="loginButton_Clicked"/>
         </StackLayout>
       </Grid>
     </StackLayout>

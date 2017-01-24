@@ -6,6 +6,9 @@ namespace DispatchApi
 {
     public partial class TodoList : ContentPage
     {
+        // Track whether the user has authenticated.
+        bool authenticated = false;
+
         TodoItemManager manager;
 
         public TodoList()
@@ -33,8 +36,16 @@ namespace DispatchApi
         {
             base.OnAppearing();
 
-            // Set syncItems to true in order to synchronize the data on startup when running in offline mode
-            await RefreshItems(true, syncItems: true);
+            // Refresh items only when authenticated.
+            if (authenticated == true)
+            {
+                // Set syncItems to true in order to synchronize the data
+                // on startup when running in offline mode.
+                await RefreshItems(true, syncItems: false);
+
+                // Hide the Sign-in button.
+                this.loginButton.IsVisible = false;
+            }
         }
 
         // Data methods
@@ -128,6 +139,16 @@ namespace DispatchApi
             {
                 todoList.ItemsSource = await manager.GetTodoItemsAsync(syncItems);
             }
+        }
+
+        async void loginButton_Clicked(object sender, EventArgs e)
+        {
+            if (App.Authenticator != null)
+                authenticated = await App.Authenticator.Authenticate();
+
+            // Set syncItems to true to synchronize the data on startup when offline is enabled.
+            if (authenticated == true)
+                await RefreshItems(true, syncItems: false);
         }
 
         private class ActivityIndicatorScope : IDisposable
