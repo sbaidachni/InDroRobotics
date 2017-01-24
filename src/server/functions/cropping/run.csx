@@ -6,8 +6,6 @@ using ImageProcessor;
 
 public static void Run(Stream inputImage, Stream outputImage, TraceWriter log)
 {
-    log.Info($"Function triggered!!");
-    
     using (var imageFactory = new ImageFactory())
     {
         imageFactory
