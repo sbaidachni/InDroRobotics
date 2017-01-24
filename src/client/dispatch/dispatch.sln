@@ -13,6 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dispatch.UWP", "dispatch.UW
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		dispatch\dispatch.projitems*{5202de9d-d28d-4a6e-baa6-b078ee35fc87}*SharedItemsImports = 4
 		dispatch\dispatch.projitems*{e7c80112-004e-497d-a74e-3c7e112b56eb}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
