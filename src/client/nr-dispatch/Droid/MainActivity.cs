@@ -28,8 +28,8 @@ namespace DispatchApi.Droid
             var message = string.Empty;
             try
             {
-                // Sign in with Facebook login using a server-managed flow.
-                user = await TodoItemManager.DefaultManager.CurrentClient.LoginAsync(this,
+                // Sign in with Azure AD login using a server-managed flow.
+                user = await DispatchManager.DefaultManager.CurrentClient.LoginAsync(this,
                     MobileServiceAuthenticationProvider.WindowsAzureActiveDirectory);
                 if (user != null)
                 {

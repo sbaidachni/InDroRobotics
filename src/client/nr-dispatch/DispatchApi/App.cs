@@ -22,7 +22,7 @@ namespace DispatchApi
         public App ()
 		{
 			// The root page of your application
-			MainPage = new TodoList();
+			MainPage = new Dispatch();
 		}
 
 		protected override void OnStart ()
