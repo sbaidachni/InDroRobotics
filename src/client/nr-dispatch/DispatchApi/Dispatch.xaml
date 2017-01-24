@@ -15,40 +15,33 @@
                        IsEnabled="True"
                        x:Name="syncIndicator"/>
     <StackLayout Grid.Row="0" BackgroundColor="#5ABAFF" Padding="10,30,10,5">
-      <Label TextColor="#555555" Text="Azure App Service" />
+      <Label TextColor="#555555" Text="IDrone Marine Identifier" />
       <Grid>
         <Grid.ColumnDefinitions>
           <ColumnDefinition/>
           <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <Entry x:Name="newItemName"
-                  Placeholder="Item name" />
         <StackLayout x:Name="buttonsPanel" Grid.Column="1" Orientation="Horizontal" HorizontalOptions="StartAndExpand">
-          <Button Text="+"
-                  MinimumHeightRequest="30"
-                  Clicked="OnAdd" />
           <Button x:Name="loginButton" Text="Sign-in" MinimumHeightRequest="30"
                   Clicked="loginButton_Clicked"/>
         </StackLayout>
       </Grid>
     </StackLayout>
-
     <StackLayout Grid.Row="1" BackgroundColor="#5ABAFF" Padding="10,30,10,5">
-      <Label TextColor="#555555" Text="Azure App Service" />
       <Grid>
         <Grid.ColumnDefinitions>
           <ColumnDefinition/>
           <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <StackLayout x:Name="ImagePanel" Grid.Column="0" Orientation="Horizontal" HorizontalOptions="StartAndExpand">
-          <Button Text="GET AN IMAGE!"
+          <Button Text="GET IMAGES!"
                   MinimumHeightRequest="30"
-                  Clicked="OnAddImage" />
+                  Clicked="OnAddImages" />
         </StackLayout>
       </Grid>
     </StackLayout>
     
-    <ListView x:Name="todoList"
+    <ListView x:Name="imageList"
 				ItemSelected="OnSelected"
 				IsPullToRefreshEnabled="true" Refreshing="OnRefresh"
 				Grid.Row="2">

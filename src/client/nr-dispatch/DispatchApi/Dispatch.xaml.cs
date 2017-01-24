@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -49,60 +50,52 @@ namespace DispatchApi
             }
         }
 
-        public async void OnAddImage(object sender, EventArgs e)
+        public async void OnAddImages(object sender, EventArgs e)
         {
-            await AddImage();
+            await AddImages();
         }
 
         // Data methods
-        async Task AddImage()
+        async Task AddImages()
         {
-            var m = manager.CurrentClient.CurrentUser.MobileServiceAuthenticationToken;
+            var images = await manager.CurrentClient.InvokeApiAsync<IEnumerable<Image>>("/tables/images", HttpMethod.Get, null);
+            await manager.SaveTaskAsync(images);
+            imageList.ItemsSource = await manager.GetImagesAsync();
 
-            var v = await manager.CurrentClient.InvokeApiAsync("tables/images", HttpMethod.Get, null);
 
-            
         }
 
 
         // Data methods
-        async Task AddItem(TodoItem item)
+        async Task AddItem(Image item)
         {
             await manager.SaveTaskAsync(item);
-            todoList.ItemsSource = await manager.GetTodoItemsAsync();
+            imageList.ItemsSource = await manager.GetImagesAsync();
         }
 
-        async Task CompleteItem(TodoItem item)
+        async Task CompleteItem(Image item)
         {
-            item.Done = true;
+            item.Deleted = true;
             await manager.SaveTaskAsync(item);
-            todoList.ItemsSource = await manager.GetTodoItemsAsync();
+            imageList.ItemsSource = await manager.GetImagesAsync();
         }
 
-        public async void OnAdd(object sender, EventArgs e)
-        {
-            var todo = new TodoItem { Name = newItemName.Text };
-            await AddItem(todo);
-
-            newItemName.Text = string.Empty;
-            newItemName.Unfocus();
-        }
 
         // Event handlers
         public async void OnSelected(object sender, SelectedItemChangedEventArgs e)
         {
-            var todo = e.SelectedItem as TodoItem;
+            var todo = e.SelectedItem as Image;
             if (Device.OS != TargetPlatform.iOS && todo != null)
             {
                 // Not iOS - the swipe-to-delete is discoverable there
                 if (Device.OS == TargetPlatform.Android)
                 {
-                    await DisplayAlert(todo.Name, "Press-and-hold to complete task " + todo.Name, "Got it!");
+                    await DisplayAlert(todo.Id, "Press-and-hold to complete task " + todo.Id, "Got it!");
                 }
                 else
                 {
                     // Windows, not all platforms support the Context Actions yet
-                    if (await DisplayAlert("Mark completed?", "Do you wish to complete " + todo.Name + "?", "Complete", "Cancel"))
+                    if (await DisplayAlert("Mark completed?", "Do you wish to complete " + todo.Id + "?", "Complete", "Cancel"))
                     {
                         await CompleteItem(todo);
                     }
@@ -110,14 +103,14 @@ namespace DispatchApi
             }
 
             // prevents background getting highlighted
-            todoList.SelectedItem = null;
+            imageList.SelectedItem = null;
         }
 
         // http://developer.xamarin.com/guides/cross-platform/xamarin-forms/working-with/listview/#context
         public async void OnComplete(object sender, EventArgs e)
         {
             var mi = ((MenuItem)sender);
-            var todo = mi.CommandParameter as TodoItem;
+            var todo = mi.CommandParameter as Image;
             await CompleteItem(todo);
         }
 
@@ -154,7 +147,7 @@ namespace DispatchApi
         {
             using (var scope = new ActivityIndicatorScope(syncIndicator, showActivityIndicator))
             {
-                todoList.ItemsSource = await manager.GetTodoItemsAsync(syncItems);
+                imageList.ItemsSource = await manager.GetImagesAsync(syncItems);
             }
         }
 
