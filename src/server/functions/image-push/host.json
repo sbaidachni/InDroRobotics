@@ -4,7 +4,7 @@
       "name": "inStream",
       "type": "blobTrigger",
       "direction": "in",
-      "path": "iamges/{name}",
+      "path": "images/{name}",
       "connection": "ImageRepository"
     }
   ],

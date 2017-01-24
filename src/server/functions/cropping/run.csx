@@ -8,8 +8,8 @@ using ImageProcessor.Imaging.Formats;
 
 public static void Run(Stream inStream, string name, TraceWriter log)
 {
-    var format = new JpegFormat { Quality = 70 };
-    var size = new Size(150, 0);
+    //var format = new JpegFormat { Quality = 70 };
+    //var size = new Size(150, 0);
 
     // using (var outStream = new MemoryStream()) //PUSH to Output
     // {
