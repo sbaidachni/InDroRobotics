@@ -1,21 +1,11 @@
 {
   "bindings": [
     {
-      "queueName": "tostore",
-      "name": "in",
-      "type": "serviceBusTrigger",
+      "name": "myBlob",
+      "type": "blobTrigger",
       "direction": "in",
-      "connection": "AzureWebJobsServiceBus",
-      "accessRights": "Manage"
-    },
-    {
-      "type": "documentDB",
-      "name": "out",
-      "databaseName": "missingdata",
-      "collectionName": "twitter-data",
-      "createIfNotExists": true,
-      "connection": "DocumentDB",
-      "direction": "out"
+      "path": "samples-workitems/{name}",
+      "connection": "AzureWebJobsDashboard"
     }
   ],
   "disabled": false

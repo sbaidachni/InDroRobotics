@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 
 public static void Run(TimerInfo myTimer, TraceWriter log)
 {
