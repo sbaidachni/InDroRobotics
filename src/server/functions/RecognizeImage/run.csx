@@ -15,6 +15,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Iris;
 using Iris.SDK;
+using Iris.SDK.Models;
 using Iris.SDK.Evaluation;
 
 private const string ConnString = "Server=tcp:indro.database.windows.net,1433;Initial Catalog=dispatchDb;Persist Security Info=False;User ID=troy;Password=IndroRobotics1!;MultipleActiveResultSets=true;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
@@ -48,18 +49,17 @@ public static void Run(EventHubMessage eventHubMessage, TraceWriter log)
 
             using (var stream = new System.IO.MemoryStream(image))
             {
-                log.Info("Start!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-
                 var irisResult = endpoint.EvaluateImage(stream);
-                log.Info("Middle!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-
-                log.Info($"{nameof(irisResult)} {irisResult}");
-                log.Info("End!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-
-                irisResult.Classifications.ToList().ForEach(c =>
+                irisResult.Classifications.ToList().ForEach(evaluation =>
                 {
-                    log.Info($"{nameof(c.ClassProperty)} {c.ClassProperty}");
-                    log.Info($"{nameof(c.Probability)} {c.Probability}");
+                    log.Info($"{nameof(evaluation.ClassProperty)} {evaluation.ClassProperty}");
+                    log.Info($"{nameof(evaluation.Probability)} {evaluation.Probability}");
+                    log.Info($"{nameof(evaluation.GetType)} {evaluation.GetType()}");
+
+                    if (evaluation.ClassProperty != "Other")
+                    {
+                        InsertIrisEvaluationIntoDb(connection, evaluation, log);
+                    }
                 });
             }
         });
@@ -71,6 +71,7 @@ private static List<IrisMetadata> ReadIrisMetadataFromDb(
     TraceWriter log)
 {
     const string query = "select irisUri, objectName, projectId from iris";
+
 
     var selectIrisMetadata = new SqlCommand(query, connection);
     var reader = selectIrisMetadata.ExecuteReader();
@@ -90,11 +91,31 @@ private static List<IrisMetadata> ReadIrisMetadataFromDb(
 
     return projects;
 }
+private static void InsertIrisEvaluationIntoDb(
+        SqlConnection connection,
+        ImageClassEvaluation imageClassEvaluation,
+        TraceWriter log)
+{
+    const string query = @"
+        insert into iris_images (objectName, accuracy) 
+        values (@objectName, @accuracy)";
+
+    var insertIrisEval = new SqlCommand(query, connection);
+
+    insertIrisEval.Parameters.AddRange(new SqlParameter[]
+    {
+        new SqlParameter("objectName", imageClassEvaluation.ClassProperty),
+        new SqlParameter("accuracy", imageClassEvaluation.Probability)});
+
+    var result = insertIrisEval.ExecuteNonQuery();
+
+    log.Info($"{query}: {result}");
+}
 
 private static void InsertImagesIntoDb(
-    SqlConnection connection,
-    EventHubMessage eventHubMessage,
-    TraceWriter log)
+        SqlConnection connection,
+        EventHubMessage eventHubMessage,
+        TraceWriter log)
 {
     const string query = @"
 insert into images (uri, latitude, longitude, droneId) 
@@ -107,7 +128,7 @@ values (@uri, @latitude, @longitude, @droneId)";
         new SqlParameter("uri", eventHubMessage.BlobURI),
         new SqlParameter("latitude", eventHubMessage.Latitude),
         new SqlParameter("longitude", eventHubMessage.Longitude),
-        new SqlParameter("droneId", eventHubMessage.DeviceName),
+        new SqlParameter("droneId", eventHubMessage.DeviceName)
     });
 
     insertImages.ExecuteNonQuery();
@@ -124,12 +145,6 @@ values (@uri, @latitude, @longitude, @droneId)";
     log.Info("+++++++++++++++");
 }
 
-/*
-Run this from the /functions directory to test the RecognizeImage function.
-
-func run RecognizeImage -c "{'DeviceName':'drone1','BlobURI':'https://indrostorage.blob.core.windows.net/images/drone1_2017_1_24_13_43_24.png','Latitude':48.877199999999995,'Longitude':-123.4228}"
-
-*/
 public class EventHubMessage
 {
     public string DeviceName { get; set; }
