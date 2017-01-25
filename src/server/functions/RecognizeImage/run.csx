@@ -1,7 +1,11 @@
 #r "System.Data"
 #r "Iris.SDK.Evaluation.dll"
 #r "Microsoft.Rest.ClientRuntime.dll"
+
+// 8.0.1 for net45
 #r "Microsoft.WindowsAzure.Storage.dll"
+
+// 2.0.18 for net45
 #r "King.Azure.dll"
 
 using System;
@@ -19,6 +23,7 @@ private const string BlobCredentials = "H+aiIp95f87SMHQr65YcwAbOq8LWqQf/wbbK8u93
 
 public static void Run(EventHubMessage eventHubMessage, TraceWriter log)
 {
+    // Method not found: 'Void King.Azure.Data.Container..ctor(System.String, System.String, Boolean, Microsoft.WindowsAzure.Storage.RetryPolicies.LocationMode)'.
     var container = new King.Azure.Data.Container("Images", ImageRepository);
     var image = container.Get(eventHubMessage.BlobURI).Result;
 
@@ -42,7 +47,7 @@ public static void Run(EventHubMessage eventHubMessage, TraceWriter log)
 
                 var irisResult = endpoint.EvaluateImage(stream);
 
-            // log.Info($"{nameof(irisResult)} {irisResult}");
+                // log.Info($"{nameof(irisResult)} {irisResult}");
             }
         });
     }
