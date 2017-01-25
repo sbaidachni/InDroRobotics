@@ -2,6 +2,7 @@
 #r "Iris.SDK.Evaluation.dll"
 #r "Microsoft.Rest.ClientRuntime.dll"
 #r "Microsoft.WindowsAzure.Storage.dll"
+#R "King.Azure"
 
 using System;
 using System.Collections.Generic;
@@ -12,15 +13,15 @@ using Iris;
 using Iris.SDK;
 using Iris.SDK.Evaluation;
 
-using Microsoft.WindowsAzure.Storage;
-
 private const string ConnString = "Server=tcp:indro.database.windows.net,1433;Initial Catalog=dispatchDb;Persist Security Info=False;User ID=troy;Password=IndroRobotics1!;MultipleActiveResultSets=true;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
-
+private const string ImageRepository = "DefaultEndpointsProtocol=https;AccountName=indrostorage;AccountKey=H+aiIp95f87SMHQr65YcwAbOq8LWqQf/wbbK8u93XB2dKBwzZvLxdW944L68+urQJYjU61lfplHnT8t8nL3UeQ==";
 private const string BlobCredentials = "H+aiIp95f87SMHQr65YcwAbOq8LWqQf/wbbK8u93XB2dKBwzZvLxdW944L68+urQJYjU61lfplHnT8t8nL3UeQ==";
 
 public static async void Run(EventHubMessage eventHubMessage, TraceWriter log)
 {
-    var imageStream = await DownloadImage(eventHubMessage.BlobURI, log);
+    var container = new King.Azure.Container(ImageRepository);
+    var image = await container.Get(eventHubMessage.BlobURI).Result;
+
     using (var connection = new SqlConnection(ConnString))
     {
         connection.Open();
@@ -33,30 +34,11 @@ public static async void Run(EventHubMessage eventHubMessage, TraceWriter log)
             var endpoint = new EvaluationEndpoint(
                 new EvaluationEndpointCredentials(p.ProjectId));
 
-            var irisResult = endpoint.EvaluateImage(imageStream);
+            //var irisResult = endpoint.EvaluateImage(imageStream);
 
-            log.Info($"{nameof(irisResult)} {irisResult}");
+           // log.Info($"{nameof(irisResult)} {irisResult}");
         });
     }
-}
-
-private static async Task<MemoryStream> DownloadImage(string blobUri, TraceWriter log)
-{
-    var storageAccount = new CloudStorageAccount(
-        new Microsoft.WindowsAzure.Storage.Auth.StorageCredentials("indrostorage", BlobCredentials),
-        true);
-
-    var blob = storageAccount.CreateCloudBlobClient();
-    var blobImage = await blob.GetBlobReferenceFromServerAsync(
-        new Uri(blobUri));
-
-    var target = new MemoryStream();
-    await blobImage.DownloadToStreamAsync(target);
-
-    log.Info($"BlobType: {blobImage.BlobType}");
-    log.Info($"StreamLength: {target.Length}");
-
-    return target;
 }
 
 private static List<IrisMetadata> ReadIrisMetadataFromDb(
