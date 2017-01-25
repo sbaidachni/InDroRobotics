@@ -39,7 +39,7 @@ public static void Run(EventHubMessage eventHubMessage, TraceWriter log)
     {
         connection.Open();
 
-        InsertImagesIntoDb(connection, eventHubMessage, log);
+        var imageId = InsertImagesIntoDb(connection, eventHubMessage, log);
         ReadIrisMetadataFromDb(connection, log).ForEach(p =>
         {
             log.Info($"{nameof(IrisMetadata.Uri)}: {p.Uri}");
@@ -58,7 +58,7 @@ public static void Run(EventHubMessage eventHubMessage, TraceWriter log)
 
                     if (evaluation.ClassProperty != "Other")
                     {
-                        InsertIrisEvaluationIntoDb(connection, evaluation, log);
+                        InsertIrisEvaluationIntoDb(connection, imageId, evaluation, log);
                     }
                 });
             }
@@ -71,7 +71,6 @@ private static List<IrisMetadata> ReadIrisMetadataFromDb(
     TraceWriter log)
 {
     const string query = "select irisUri, objectName, projectId from iris";
-
 
     var selectIrisMetadata = new SqlCommand(query, connection);
     var reader = selectIrisMetadata.ExecuteReader();
@@ -91,19 +90,22 @@ private static List<IrisMetadata> ReadIrisMetadataFromDb(
 
     return projects;
 }
+
 private static void InsertIrisEvaluationIntoDb(
         SqlConnection connection,
+        string imageId,
         ImageClassEvaluation imageClassEvaluation,
         TraceWriter log)
 {
     const string query = @"
-        insert into iris_images (objectName, accuracy) 
-        values (@objectName, @accuracy)";
+        insert into iris_images (objectName, accuracy, imageId) 
+        values (@objectName, @accuracy, @imageId)";
 
     var insertIrisEval = new SqlCommand(query, connection);
 
     insertIrisEval.Parameters.AddRange(new SqlParameter[]
     {
+        new SqlParameter("imageId", imageId),
         new SqlParameter("objectName", imageClassEvaluation.ClassProperty),
         new SqlParameter("accuracy", imageClassEvaluation.Probability)});
 
@@ -112,14 +114,16 @@ private static void InsertIrisEvaluationIntoDb(
     log.Info($"{query}: {result}");
 }
 
-private static void InsertImagesIntoDb(
+private static string InsertImagesIntoDb(
         SqlConnection connection,
         EventHubMessage eventHubMessage,
         TraceWriter log)
 {
+    // todo: Check concurrency problems. :) 
     const string query = @"
 insert into images (uri, latitude, longitude, droneId) 
-values (@uri, @latitude, @longitude, @droneId)";
+values (@uri, @latitude, @longitude, @droneId);
+select top(1) id from images order by createdAt desc";
 
     var insertImages = new SqlCommand(query, connection);
 
@@ -131,18 +135,11 @@ values (@uri, @latitude, @longitude, @droneId)";
         new SqlParameter("droneId", eventHubMessage.DeviceName)
     });
 
-    insertImages.ExecuteNonQuery();
+    var imageId = insertImages.ExecuteScalar().ToString();
 
-    log.Info("[Debug]");
-    log.Info("+++++++++++++++");
+    log.Info($"{query}: {imageId}");
 
-    var imageCountQuery = @"select count(*) from images";
-    var imageCountCmd = new SqlCommand(imageCountQuery, connection);
-    var imageCountResult = imageCountCmd.ExecuteScalar();
-    log.Info($"{nameof(imageCountQuery)} : {imageCountResult}");
-    log.Info("---");
-    log.Info($"{nameof(eventHubMessage)}: {eventHubMessage}");
-    log.Info("+++++++++++++++");
+    return imageId;
 }
 
 public class EventHubMessage
