@@ -40,14 +40,14 @@ namespace UWP
         // Define a authenticated user.
         private MobileServiceUser user;
 
-        /*
+        
         public async Task<bool> Authenticate()
         {
             string message;
             bool success = false;
 
             // This sample uses the Facebook provider.
-            var provider = MobileServiceAuthenticationProvider.Facebook;
+            var provider = MobileServiceAuthenticationProvider.WindowsAzureActiveDirectory;
 
             // Use the PasswordVault to securely store and access credentials.
             PasswordVault vault = new PasswordVault();
@@ -71,7 +71,7 @@ namespace UWP
                 user.MobileServiceAuthenticationToken = credential.Password;
 
                 // Set the user from the stored credentials.
-                TodoItemManager.DefaultManager.CurrentClient.CurrentUser = user;
+                DispatchManager.DefaultManager.CurrentClient.CurrentUser = user;
 
                 // Consider adding a check to determine if the token is 
                 // expired, as shown in this post: http://aka.ms/jww5vp.
@@ -84,7 +84,7 @@ namespace UWP
                 try
                 {
                     // Login with the identity provider.
-                    user = await TodoItemManager.DefaultManager.CurrentClient
+                    user = await DispatchManager.DefaultManager.CurrentClient
                         .LoginAsync(provider);
 
                     // Create and store the user credentials.
@@ -106,8 +106,10 @@ namespace UWP
             await dialog.ShowAsync();
 
             return success;
-        }*/
-        
+        }
+
+
+/*
         public async Task<bool> Authenticate()
         {
             string message = string.Empty;
@@ -139,5 +141,6 @@ namespace UWP
             return success;
 
         }
+        */
     }
 }

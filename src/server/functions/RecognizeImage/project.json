@@ -3,8 +3,6 @@
     "dependencies": {},
     "net461": {
       "dependencies": {
-        "Newtonsoft.Json": "9.0.1",
-        "WindowsAzure.Storage": "8.0.1"
       }
     }
   }

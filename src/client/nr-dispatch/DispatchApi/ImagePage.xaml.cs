@@ -11,11 +11,8 @@ namespace DispatchApi
 {
     public partial class ImagePage : ContentPage
     {
-
         // Track whether the user has authenticated.
         bool authenticated = false;
-
-
 
         MobileServiceClient client;
 
@@ -31,6 +28,9 @@ namespace DispatchApi
         {
             base.OnAppearing();
 
+            if (App.Authenticator != null)
+                authenticated = await App.Authenticator.Authenticate();
+
             // Refresh items only when authenticated.
             if (authenticated == true)
             {
@@ -38,12 +38,22 @@ namespace DispatchApi
 
                 // Hide the Sign-in button.
                 this.loginButton.IsVisible = false;
+
+                // Show the Sign-out button.
+                this.logoutButton.IsVisible = true;
+            }
+            else
+            {
+                // Show the Sign-in button.
+                this.loginButton.IsVisible = true;
+
+                // Hide the Sign-out button.
+                this.logoutButton.IsVisible = false;
             }
         }
 
         protected async void Refresh()
         {
-
             client = DispatchManager.DefaultManager.CurrentClient;
 
             var imageTable = client.GetTable<images>();
@@ -56,14 +66,17 @@ namespace DispatchApi
             {
                 viewModel.Items.Add(new MainPageItem() { DroneName=item.DroneId });
             }
-
+            lastRefresh.Text = "Last Refreshed: "+ DateTime.Now.ToString("MMMM, MM dd, yyyy hh: mm:ss");
             this.BindingContext = viewModel;
 
         }
 
+        async void RefreshClicked(object sender, EventArgs e)
+        {
+            OnAppearing();
+        }
 
-
-        async void loginButton_Clicked(object sender, EventArgs e)
+        async void LoginClicked(object sender, EventArgs e)
         {
             if (App.Authenticator != null)
                 authenticated = await App.Authenticator.Authenticate();
@@ -76,6 +89,42 @@ namespace DispatchApi
 
                 // Hide the Sign-in button.
                 this.loginButton.IsVisible = false;
+
+                // Show the Sign-out button.
+                this.logoutButton.IsVisible = true;
+            }
+            else
+            {
+                // Show the Sign-in button.
+                this.loginButton.IsVisible = true;
+
+                // Hide the Sign-out button.
+                this.logoutButton.IsVisible = false;
+            }
+        }
+
+        async void LogoutClicked(object sender, EventArgs e)
+        {
+            if (DispatchManager.DefaultManager.CurrentClient != null)
+            {
+                await DispatchManager.DefaultManager.CurrentClient.LogoutAsync();
+                authenticated = false;
+            }
+            if (authenticated == true)
+            {
+                // Hide the Sign-in button.
+                this.loginButton.IsVisible = false;
+
+                // Show the Sign-out button.
+                this.logoutButton.IsVisible = true;
+            }
+            else
+            {
+                // Show the Sign-in button.
+                this.loginButton.IsVisible = true;
+
+                // Hide the Sign-out button.
+                this.logoutButton.IsVisible = false;
             }
         }
     }
