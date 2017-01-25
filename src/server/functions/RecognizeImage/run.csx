@@ -2,7 +2,7 @@
 #r "Iris.SDK.Evaluation.dll"
 #r "Microsoft.Rest.ClientRuntime.dll"
 #r "Microsoft.WindowsAzure.Storage.dll"
-#r "King.Azure"
+#r "King.Azure.dll"
 
 using System;
 using System.Collections.Generic;
@@ -19,7 +19,7 @@ private const string BlobCredentials = "H+aiIp95f87SMHQr65YcwAbOq8LWqQf/wbbK8u93
 
 public static void Run(EventHubMessage eventHubMessage, TraceWriter log)
 {
-    var container = new King.Azure.Container(ImageRepository);
+    var container = new King.Azure.Data.Container(ImageRepository);
     var image = await container.Get(eventHubMessage.BlobURI).Result;
 
     using (var connection = new SqlConnection(ConnString))
@@ -38,7 +38,7 @@ public static void Run(EventHubMessage eventHubMessage, TraceWriter log)
 
             //var irisResult = endpoint.EvaluateImage(imageStream);
 
-           // log.Info($"{nameof(irisResult)} {irisResult}");
+            // log.Info($"{nameof(irisResult)} {irisResult}");
         });
     }
 }
