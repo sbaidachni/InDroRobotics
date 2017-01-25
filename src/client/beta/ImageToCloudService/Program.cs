@@ -111,6 +111,8 @@ namespace ImageToCloudService
             return blobName;
         }
 
+    
+
         static double getLatitude(FileInfo f)
         {
             string fileName = f.Name;
@@ -121,11 +123,14 @@ namespace ImageToCloudService
                 try
                 {
                     return Double.Parse(fileName.Split(',')[0]);
-                } catch
+                }
+                catch
                 {
+                    Console.WriteLine("Filename not in expected format, assigning dummy latitude");
                     return 0.0;
                 }
-            } else
+            }
+            else
             {
                 return 0.0;
             }
@@ -144,6 +149,7 @@ namespace ImageToCloudService
                 }
                 catch
                 {
+                    Console.WriteLine("Filename not in expected format, assigning dummy longitude");
                     return 0.0;
                 }
             }
