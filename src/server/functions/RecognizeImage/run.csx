@@ -1,21 +1,92 @@
 #r "System.Data"
 #r "Iris.SDK.Evaluation.dll"
+#r "Microsoft.Rest.ClientRuntime.dll"
+#r "Microsoft.WindowsAzure.Storage.dll"
 
+using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
+
 using Iris;
+using Iris.SDK;
+using Iris.SDK.Evaluation;
+
+using Microsoft.WindowsAzure.Storage;
+
+private const string ConnString = "Server=tcp:indro.database.windows.net,1433;Initial Catalog=dispatchDb;Persist Security Info=False;User ID=troy;Password=IndroRobotics1!;MultipleActiveResultSets=true;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+
+private const string BlobCredentials = "H+aiIp95f87SMHQr65YcwAbOq8LWqQf/wbbK8u93XB2dKBwzZvLxdW944L68+urQJYjU61lfplHnT8t8nL3UeQ==";
 
 public static void Run(EventHubMessage eventHubMessage, TraceWriter log)
 {
-    var connection = new SqlConnection("Server=tcp:indro.database.windows.net,1433;Initial Catalog=dispatchDb;Persist Security Info=False;User ID=troy;Password=IndroRobotics1!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+    using (SqlConnection connection = new SqlConnection(ConnString))
+    {
+        connection.Open();
+        var metadata = ReadIrisMetadata(connection, log);
 
-    connection.Open();
+        metadata.ForEach(p =>
+        {
+            log.Info(p.Uri);
 
-    var insertImages = new SqlCommand("insert into images (uri) values (@uri)", connection);
+            EvaluationEndpoint endpoint = new EvaluationEndpoint(
+                new EvaluationEndpointCredentials(p.ProjectId));
+
+            // var storageAccount = new CloudStorageAccount(
+            //     new Microsoft.WindowsAzure.Storage.Auth.StorageCredentials("indrostorage", BlobCredentials),
+            //     true);
+
+            // var blob = storageAccount.CreateCloudBlobClient();
+            // var blobImage = blob.GetBlobReferenceFromServerAsync(
+            //     new Uri(ImageUri));
+
+            // blobImage.Wait();
+
+            // var target = new MemoryStream();
+        });
+
+        InsertImages(connection, eventHubMessage, log);
+    }
+}
+
+private static List<IrisMetadata> ReadIrisMetadata(
+    SqlConnection connection,
+    TraceWriter log)
+{
+    const string query = "select irisUri, objectName, projectId from iris";
+
+    var selectIrisMetadata = new SqlCommand(query, connection);
+    var reader = selectIrisMetadata.ExecuteReader();
+
+    var projects = new List<IrisMetadata> { };
+    while (reader.Read())
+    {
+        var metadata = new IrisMetadata
+        {
+            Uri = reader["irisUri"].ToString(),
+            ProjectId = reader["projectId"].ToString(),
+            ObjectName = reader["objectName"].ToString()
+        };
+
+        projects.Add(metadata);
+    }
+
+    return projects;
+}
+
+private static void InsertImages(
+    SqlConnection connection,
+    EventHubMessage eventHubMessage,
+    TraceWriter log)
+{
+    const string query = @"
+insert into images (uri, latitude, longitude, droneId) 
+values (@uri, @latitude, @longitude, @droneId)";
+
+    var insertImages = new SqlCommand(query, connection);
 
     insertImages.Parameters.AddRange(new SqlParameter[]
     {
         new SqlParameter("uri", eventHubMessage.BlobURI),
-        new SqlParameter("thumbnailUri", string.Empty), // this will be by convention
         new SqlParameter("latitude", eventHubMessage.Latitude),
         new SqlParameter("longitude", eventHubMessage.Longitude),
         new SqlParameter("droneId", eventHubMessage.DeviceName),
@@ -33,13 +104,13 @@ public static void Run(EventHubMessage eventHubMessage, TraceWriter log)
     log.Info("---");
     log.Info($"{nameof(eventHubMessage)}: {eventHubMessage}");
     log.Info("+++++++++++++++");
-
-    connection.Close();
 }
 
-
 /*
+Run this from the /functions directory to test the RecognizeImage function.
+
 func run RecognizeImage -c "{'DeviceName':'drone1','BlobURI':'https://indrostorage.blob.core.windows.net/images/drone1_2017_1_24_13_43_24.png','Latitude':48.877199999999995,'Longitude':-123.4228}"
+
 */
 public class EventHubMessage
 {
@@ -55,4 +126,13 @@ public class EventHubMessage
     {
         return $"{DeviceName} {BlobURI} {Latitude} {Longitude}";
     }
+}
+
+public class IrisMetadata
+{
+    public string Uri { get; set; }
+
+    public string ProjectId { get; set; }
+
+    public string ObjectName { get; set; }
 }
