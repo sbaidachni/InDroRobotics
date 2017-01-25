@@ -19,8 +19,8 @@ private const string BlobCredentials = "H+aiIp95f87SMHQr65YcwAbOq8LWqQf/wbbK8u93
 
 public static void Run(EventHubMessage eventHubMessage, TraceWriter log)
 {
-    var container = new King.Azure.Data.Container(ImageRepository);
-    var image = await container.Get(eventHubMessage.BlobURI).Result;
+    var container = new King.Azure.Data.Container("Images", ImageRepository);
+    var image = container.Get(eventHubMessage.BlobURI).Result;
 
     using (var connection = new SqlConnection(ConnString))
     {
