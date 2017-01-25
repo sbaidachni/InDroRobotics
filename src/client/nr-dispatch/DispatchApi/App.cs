@@ -22,7 +22,7 @@ namespace DispatchApi
         public App ()
 		{
 			// The root page of your application
-			MainPage = new Dispatch();
+			MainPage = new ImagePage();
 		}
 
 		protected override void OnStart ()

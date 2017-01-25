@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 namespace DispatchApi
 {
     [JsonObject]
-	public class Image
+	public class images
 	{
 		[JsonProperty(PropertyName = "id")]
         public string Id { get; set; }

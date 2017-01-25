@@ -15,13 +15,12 @@ namespace DispatchApi
         static DispatchManager defaultInstance = new DispatchManager();
         MobileServiceClient client;
 
-        IMobileServiceTable<Image> imageTable;
+        IMobileServiceTable<images> imageTable;
 
         private DispatchManager()
         {
             this.client = new MobileServiceClient(Constants.ApplicationURL);
 
-            this.imageTable = client.GetTable<Image>();
         }
 
         public static DispatchManager DefaultManager
@@ -43,18 +42,18 @@ namespace DispatchApi
 
         public bool IsOfflineEnabled
         {
-            get { return imageTable is Microsoft.WindowsAzure.MobileServices.Sync.IMobileServiceSyncTable<Image>; }
+            get { return imageTable is Microsoft.WindowsAzure.MobileServices.Sync.IMobileServiceSyncTable<images>; }
         }
 
-        public async Task<ObservableCollection<Image>> GetImagesAsync(bool syncItems = false)
+        public async Task<ObservableCollection<images>> GetImagesAsync(bool syncItems = false)
         {
             try
             {
-                IEnumerable<Image> images = await imageTable
+                IEnumerable<images> images = await imageTable
                     .Where(image => !image.Deleted)
                     .ToEnumerableAsync();
 
-                return new ObservableCollection<Image>(images);
+                return new ObservableCollection<images>(images);
             }
             catch (MobileServiceInvalidOperationException msioe)
             {
@@ -67,7 +66,7 @@ namespace DispatchApi
             return null;
         }
 
-        public async Task SaveTaskAsync(Image item)
+        public async Task SaveTaskAsync(images item)
         {
             if (item.Id == null)
             {
@@ -79,7 +78,7 @@ namespace DispatchApi
             }
         }
 
-        public async Task SaveTaskAsync(IEnumerable<Image> items)
+        public async Task SaveTaskAsync(IEnumerable<images> items)
         {
             if (items != null && items.Count() > 0)
             {
