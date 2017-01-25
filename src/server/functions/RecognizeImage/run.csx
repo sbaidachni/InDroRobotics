@@ -18,9 +18,9 @@ private const string ConnString = "Server=tcp:indro.database.windows.net,1433;In
 
 private const string BlobCredentials = "H+aiIp95f87SMHQr65YcwAbOq8LWqQf/wbbK8u93XB2dKBwzZvLxdW944L68+urQJYjU61lfplHnT8t8nL3UeQ==";
 
-public static async void Run(EventHubMessage eventHubMessage, TraceWriter log)
+public static void Run(EventHubMessage eventHubMessage, TraceWriter log)
 {
-    var imageStream = await DownloadImage(eventHubMessage.BlobURI, log);
+    var imageStream = DownloadImage(eventHubMessage.BlobURI, log).Result;
     using (var connection = new SqlConnection(ConnString))
     {
         connection.Open();
@@ -28,14 +28,25 @@ public static async void Run(EventHubMessage eventHubMessage, TraceWriter log)
         InsertImagesIntoDb(connection, eventHubMessage, log);
         ReadIrisMetadataFromDb(connection, log).ForEach(p =>
         {
+            // Uri: https://ppevisual.cloudapp.net/projects/66f494b3-a393-47f9-8d9a-7bc9e8d1399c/performance#
+            // ProjectId: 408cfa4001094d4ab15d5c2b8ce5b4d5            
             log.Info($"{nameof(IrisMetadata.Uri)}: {p.Uri}");
+            log.Info($"{nameof(IrisMetadata.ProjectId)}: {p.ProjectId}");
 
-            var endpoint = new EvaluationEndpoint(
-                new EvaluationEndpointCredentials(p.ProjectId));
+            try
+            {
+                var endpoint = new EvaluationEndpoint(
+                    new EvaluationEndpointCredentials(p.ProjectId));
 
-            var irisResult = endpoint.EvaluateImage(imageStream);
+                var irisResult = endpoint.EvaluateImage(imageStream);
+            }
+            catch (Exception ex)
+            {
+                log.Info($"ImageStream.CanRead: {imageStream.CanRead}");
+                log.Info(ex.Message);
+            }
 
-            log.Info($"{nameof(irisResult)} {irisResult}");
+            // log.Info($"{nameof(irisResult)} {irisResult}");
         });
     }
 }
