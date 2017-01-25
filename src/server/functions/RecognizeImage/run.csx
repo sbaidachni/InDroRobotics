@@ -3,10 +3,11 @@
 #r "Microsoft.Rest.ClientRuntime.dll"
 #r "Microsoft.WindowsAzure.Storage.dll"
 
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-
+using System.Threading.Tasks;
 using Iris;
 using Iris.SDK;
 using Iris.SDK.Evaluation;
@@ -17,38 +18,48 @@ private const string ConnString = "Server=tcp:indro.database.windows.net,1433;In
 
 private const string BlobCredentials = "H+aiIp95f87SMHQr65YcwAbOq8LWqQf/wbbK8u93XB2dKBwzZvLxdW944L68+urQJYjU61lfplHnT8t8nL3UeQ==";
 
-public static void Run(EventHubMessage eventHubMessage, TraceWriter log)
+public static async void Run(EventHubMessage eventHubMessage, TraceWriter log)
 {
-    using (SqlConnection connection = new SqlConnection(ConnString))
+    var imageStream = await DownloadImage(eventHubMessage.BlobURI, log);
+    using (var connection = new SqlConnection(ConnString))
     {
         connection.Open();
-        var metadata = ReadIrisMetadata(connection, log);
 
-        metadata.ForEach(p =>
+        InsertImagesIntoDb(connection, eventHubMessage, log);
+        ReadIrisMetadataFromDb(connection, log).ForEach(p =>
         {
-            log.Info(p.Uri);
+            log.Info($"{nameof(IrisMetadata.Uri)}: {p.Uri}");
 
-            EvaluationEndpoint endpoint = new EvaluationEndpoint(
+            var endpoint = new EvaluationEndpoint(
                 new EvaluationEndpointCredentials(p.ProjectId));
 
-            // var storageAccount = new CloudStorageAccount(
-            //     new Microsoft.WindowsAzure.Storage.Auth.StorageCredentials("indrostorage", BlobCredentials),
-            //     true);
+            var irisResult = endpoint.EvaluateImage(imageStream);
 
-            // var blob = storageAccount.CreateCloudBlobClient();
-            // var blobImage = blob.GetBlobReferenceFromServerAsync(
-            //     new Uri(ImageUri));
-
-            // blobImage.Wait();
-
-            // var target = new MemoryStream();
+            log.Info($"{nameof(irisResult)} {irisResult}");
         });
-
-        InsertImages(connection, eventHubMessage, log);
     }
 }
 
-private static List<IrisMetadata> ReadIrisMetadata(
+private static async Task<MemoryStream> DownloadImage(string blobUri, TraceWriter log)
+{
+    var storageAccount = new CloudStorageAccount(
+        new Microsoft.WindowsAzure.Storage.Auth.StorageCredentials("indrostorage", BlobCredentials),
+        true);
+
+    var blob = storageAccount.CreateCloudBlobClient();
+    var blobImage = await blob.GetBlobReferenceFromServerAsync(
+        new Uri(blobUri));
+
+    var target = new MemoryStream();
+    await blobImage.DownloadToStreamAsync(target);
+
+    log.Info($"BlobType: {blobImage.BlobType}");
+    log.Info($"StreamLength: {target.Length}");
+
+    return target;
+}
+
+private static List<IrisMetadata> ReadIrisMetadataFromDb(
     SqlConnection connection,
     TraceWriter log)
 {
@@ -73,7 +84,7 @@ private static List<IrisMetadata> ReadIrisMetadata(
     return projects;
 }
 
-private static void InsertImages(
+private static void InsertImagesIntoDb(
     SqlConnection connection,
     EventHubMessage eventHubMessage,
     TraceWriter log)
