@@ -36,7 +36,7 @@ public static void Run(EventHubMessage eventHubMessage, TraceWriter log)
             var endpoint = new EvaluationEndpoint(
                 new EvaluationEndpointCredentials(p.ProjectId));
 
-            using (var stream = new MemoryStream(image))
+            using (var stream = new System.IO.MemoryStream(image))
             {
                 var irisResult = endpoint.EvaluateImage(imageStream);
 
