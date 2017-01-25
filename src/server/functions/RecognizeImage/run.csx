@@ -24,8 +24,9 @@ private const string BlobCredentials = "H+aiIp95f87SMHQr65YcwAbOq8LWqQf/wbbK8u93
 public static void Run(EventHubMessage eventHubMessage, TraceWriter log)
 {
     // Method not found: 'Void King.Azure.Data.Container..ctor(System.String, System.String, Boolean, Microsoft.WindowsAzure.Storage.RetryPolicies.LocationMode)'.
-    var container = new King.Azure.Data.Container("Images", ImageRepository);
-    var image = container.Get(eventHubMessage.BlobURI).Result;
+    var container = new King.Azure.Data.Container("images", ImageRepository);
+    var uri = "drone1_2017_1_23_14_59_52"; //eventHubMessage.BlobURI
+    var image = container.Get(uri).Result;
 
     using (var connection = new SqlConnection(ConnString))
     {
