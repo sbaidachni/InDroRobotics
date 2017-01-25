@@ -23,8 +23,16 @@ private const string BlobCredentials = "H+aiIp95f87SMHQr65YcwAbOq8LWqQf/wbbK8u93
 
 public static void Run(EventHubMessage eventHubMessage, TraceWriter log)
 {
-    var container = new King.Azure.Data.Container("Images", ImageRepository);
-    var image = container.Get(eventHubMessage.BlobURI).Result;
+    var container = new King.Azure.Data.Container("images", ImageRepository);
+
+    var lastIndex = eventHubMessage.BlobURI.LastIndexOf("/") + 1;
+    var blogUri = eventHubMessage.BlobURI.Substring(
+        lastIndex,
+        eventHubMessage.BlobURI.Length - lastIndex);
+
+    log.Info($"{nameof(blogUri)}: {blogUri}");
+
+    var image = container.Get(blogUri).Result;
 
     using (var connection = new SqlConnection(ConnString))
     {
@@ -33,20 +41,26 @@ public static void Run(EventHubMessage eventHubMessage, TraceWriter log)
         InsertImagesIntoDb(connection, eventHubMessage, log);
         ReadIrisMetadataFromDb(connection, log).ForEach(p =>
         {
-            // Uri: https://ppevisual.cloudapp.net/projects/66f494b3-a393-47f9-8d9a-7bc9e8d1399c/performance#
-            // ProjectId: 408cfa4001094d4ab15d5c2b8ce5b4d5            
             log.Info($"{nameof(IrisMetadata.Uri)}: {p.Uri}");
 
             var endpoint = new EvaluationEndpoint(
                 new EvaluationEndpointCredentials(p.ProjectId));
 
-            using (var stream = new System.IO.MemoryStream())
+            using (var stream = new System.IO.MemoryStream(image))
             {
-                stream.Write(image, 0, image.Length);
+                log.Info("Start!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
                 var irisResult = endpoint.EvaluateImage(stream);
+                log.Info("Middle!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
-                // log.Info($"{nameof(irisResult)} {irisResult}");
+                log.Info($"{nameof(irisResult)} {irisResult}");
+                log.Info("End!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
+                irisResult.Classifications.ToList().ForEach(c =>
+                {
+                    log.Info($"{nameof(c.ClassProperty)} {c.ClassProperty}");
+                    log.Info($"{nameof(c.Probability)} {c.Probability}");
+                });
             }
         });
     }
