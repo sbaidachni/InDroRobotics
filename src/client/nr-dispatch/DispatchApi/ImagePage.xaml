@@ -8,7 +8,8 @@
       <RowDefinition Height="*" />
     </Grid.RowDefinitions>
     <StackLayout Grid.Row="0" BackgroundColor="#5ABAFF" Padding="10,30,10,5">
-      <Label TextColor="#555555" Text="IDrone Marine Identifier" />
+      <Label TextColor="#555555" Text="Drone Marine Identifier" />
+      <Label x:Name="lastRefresh" Font="15,Bold" />
       <Grid>
         <Grid.ColumnDefinitions>
           <ColumnDefinition/>
@@ -16,7 +17,11 @@
         </Grid.ColumnDefinitions>
         <StackLayout x:Name="buttonsPanel" Grid.Column="1" Orientation="Horizontal" HorizontalOptions="StartAndExpand">
           <Button x:Name="loginButton" Text="Sign-in" MinimumHeightRequest="30"
-                  Clicked="loginButton_Clicked"/>
+                  Clicked="LoginClicked"/>
+          <Button x:Name="logoutButton" Text="Sign-out" MinimumHeightRequest="30"
+                  Clicked="LogoutClicked"/>
+          <Button x:Name="refreshButton" Text="Refresh" MinimumHeightRequest="30"
+                  Clicked="RefreshClicked"/>
         </StackLayout>
       </Grid>
     </StackLayout>
