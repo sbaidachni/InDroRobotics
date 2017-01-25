@@ -36,9 +36,12 @@ public static void Run(EventHubMessage eventHubMessage, TraceWriter log)
             var endpoint = new EvaluationEndpoint(
                 new EvaluationEndpointCredentials(p.ProjectId));
 
-            //var irisResult = endpoint.EvaluateImage(imageStream);
+            using (var stream = new MemoryStream(image))
+            {
+                var irisResult = endpoint.EvaluateImage(imageStream);
 
             // log.Info($"{nameof(irisResult)} {irisResult}");
+            }
         });
     }
 }
