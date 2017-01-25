@@ -39,8 +39,8 @@ public static void Run(EventHubMessage eventHubMessage, TraceWriter log)
             using (var stream = new System.IO.MemoryStream())
             {
                 stream.Write(image, 0, image.Length);
-                
-                var irisResult = endpoint.EvaluateImage(image);
+
+                var irisResult = endpoint.EvaluateImage(stream);
 
             // log.Info($"{nameof(irisResult)} {irisResult}");
             }
