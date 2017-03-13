@@ -18,12 +18,14 @@ using Iris.SDK;
 using Iris.SDK.Models;
 using Iris.SDK.Evaluation;
 
-private const string ConnString = "Server=tcp:indro.database.windows.net,1433;Initial Catalog=dispatchDb;Persist Security Info=False;User ID=troy;Password=IndroRobotics1!;MultipleActiveResultSets=true;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
-private const string ImageRepository = "DefaultEndpointsProtocol=https;AccountName=indrostorage;AccountKey=H+aiIp95f87SMHQr65YcwAbOq8LWqQf/wbbK8u93XB2dKBwzZvLxdW944L68+urQJYjU61lfplHnT8t8nL3UeQ==";
-private const string BlobCredentials = "H+aiIp95f87SMHQr65YcwAbOq8LWqQf/wbbK8u93XB2dKBwzZvLxdW944L68+urQJYjU61lfplHnT8t8nL3UeQ==";
+private string ConnString = "";
+private string ImageRepository = "";
 
 public static void Run(EventHubMessage eventHubMessage, TraceWriter log)
 {
+    ConnString = System.Environment.GetEnvironmentVariable("ConnString", EnvironmentVariableTarget.Process);
+    ImageRepository = System.Environment.GetEnvironmentVariable("ImageRepository", EnvironmentVariableTarget.Process);
+
     var container = new King.Azure.Data.Container("images", ImageRepository);
 
     var lastIndex = eventHubMessage.BlobURI.LastIndexOf("/") + 1;
