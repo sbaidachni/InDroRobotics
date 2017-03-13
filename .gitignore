@@ -240,3 +240,6 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+
+#include
+!src/server/functions/RecognizeImage/bin
