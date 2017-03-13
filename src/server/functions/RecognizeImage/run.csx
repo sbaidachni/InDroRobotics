@@ -68,6 +68,8 @@ public static void Run(EventHubMessage eventHubMessage, TraceWriter log)
     }
 }
 
+
+
 private static List<IrisMetadata> ReadIrisMetadataFromDb(
     SqlConnection connection,
     TraceWriter log)
