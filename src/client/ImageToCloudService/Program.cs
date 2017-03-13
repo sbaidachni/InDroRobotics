@@ -34,7 +34,7 @@ namespace ImageToCloudService
             Microsoft.WindowsAzure.Storage.CloudStorageAccount storageAccount;
             try
             {
-                storageAccount = new CloudStorageAccount(new Microsoft.WindowsAzure.Storage.Auth.StorageCredentials("indrostorage", ConfigurationManager.AppSettings["azureKey1"]), true);
+                storageAccount = new CloudStorageAccount(new Microsoft.WindowsAzure.Storage.Auth.StorageCredentials("indrobuildstorage", ConfigurationManager.AppSettings["azureKey1"]), true);
 
             }
             catch (StorageException e)
@@ -66,7 +66,7 @@ namespace ImageToCloudService
             DirectoryInfo dirImages = new DirectoryInfo(args[0]);
             while (true)
             {
-                var files = dirImages.GetFiles("*.png");
+                var files = dirImages.GetFiles("*.jpg");
                 foreach (FileInfo f in files)
                 {
 
