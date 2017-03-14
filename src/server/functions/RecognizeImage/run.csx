@@ -20,6 +20,7 @@ using Iris.SDK.Models;
 using Iris.SDK.Evaluation;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using Newtonsoft.Json;
 
 private static string ConnString = "";
 private static string ImageRepository = "";
@@ -66,19 +67,19 @@ public static async void Run(EventHubMessage eventHubMessage, TraceWriter log)
                     var t=await client.PostAsync(p.Uri, content);   
                     var strRes = await t.Content.ReadAsStringAsync();
                     log.Info(strRes);  
-                 /*
-                var irisResult = endpoint.EvaluateImage(stream);
-                irisResult.Classifications.ToList().ForEach(evaluation =>
-                {
-                    log.Info($"{nameof(evaluation.ClassProperty)} {evaluation.ClassProperty}");
-                    log.Info($"{nameof(evaluation.Probability)} {evaluation.Probability}");
-                    log.Info($"{nameof(evaluation.GetType)} {evaluation.GetType()}");
 
-                    if (evaluation.ClassProperty != "Other")
+                    var a=JsonConvert.DeserializeObject<IrisResult>(strRes);
+
+                    foreach (var evaluation in a.Classifications)
                     {
-                        InsertIrisEvaluationIntoDb(connection, imageId, evaluation, log);
-                    }
-                });*/       
+                        log.Info($"{nameof(evaluation.Class)} {evaluation.Class}");
+                        log.Info($"{nameof(evaluation.Probability)} {evaluation.Probability}");
+
+                        if (evaluation.Class != "Other")
+                        {
+                            InsertIrisEvaluationIntoDb(connection, imageId, evaluation, log);
+                        }
+                    });       
                 }
             }
             catch(Exception ex)
@@ -119,7 +120,7 @@ private static List<IrisMetadata> ReadIrisMetadataFromDb(
 private static void InsertIrisEvaluationIntoDb(
         SqlConnection connection,
         string imageId,
-        ImageClassEvaluation imageClassEvaluation,
+        Classification imageClassEvaluation,
         TraceWriter log)
 {
     const string query = @"
@@ -131,7 +132,7 @@ private static void InsertIrisEvaluationIntoDb(
     insertIrisEval.Parameters.AddRange(new SqlParameter[]
     {
         new SqlParameter("imageId", imageId),
-        new SqlParameter("objectName", imageClassEvaluation.ClassProperty),
+        new SqlParameter("objectName", imageClassEvaluation.Class),
         new SqlParameter("accuracy", imageClassEvaluation.Probability)});
 
     var result = insertIrisEval.ExecuteNonQuery();
@@ -191,3 +192,22 @@ public class IrisMetadata
 
     public string ObjectName { get; set; }
 }
+
+    public class IrisResult
+    {
+        public string Project { get; set; }
+
+        public string Iteration { get; set; }
+
+        [JsonProperty(PropertyName ="Classifications")]
+        List<Classification> Classifications { get; set; }
+    }
+
+    public class Classification
+    {
+        public string ClassId { get; set; }
+
+        public string Class { get; set; }
+
+        public double Probability { get; set; }
+    }
