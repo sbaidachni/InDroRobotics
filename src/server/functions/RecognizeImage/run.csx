@@ -17,6 +17,8 @@ using Iris;
 using Iris.SDK;
 using Iris.SDK.Models;
 using Iris.SDK.Evaluation;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 private static string ConnString = "";
 private static string ImageRepository = "";
@@ -46,11 +48,16 @@ public static void Run(EventHubMessage eventHubMessage, TraceWriter log)
         {
             log.Info($"{nameof(IrisMetadata.Uri)}: {p.Uri}");
 
-            var endpoint = new EvaluationEndpoint(
-                new EvaluationEndpointCredentials(p.ProjectId));
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Add("Prediction-Key", p.ProjectId);
 
-            using (var stream = new System.IO.MemoryStream(image))
+            using (var content = new ByteArrayContent(image))
             {
+                 content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+                 var t=await client.PostAsync(p.Uri, content);
+                 var strResult=await t.Content.ReadAsStringAsync();
+                 log.Info(strResult);  
+                 /*
                 var irisResult = endpoint.EvaluateImage(stream);
                 irisResult.Classifications.ToList().ForEach(evaluation =>
                 {
@@ -62,8 +69,10 @@ public static void Run(EventHubMessage eventHubMessage, TraceWriter log)
                     {
                         InsertIrisEvaluationIntoDb(connection, imageId, evaluation, log);
                     }
-                });
+                });*/       
             }
+
+
         });
     }
 }
