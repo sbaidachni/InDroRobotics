@@ -18,8 +18,8 @@ using Iris.SDK;
 using Iris.SDK.Models;
 using Iris.SDK.Evaluation;
 
-private string ConnString = "";
-private string ImageRepository = "";
+private static string ConnString = "";
+private static string ImageRepository = "";
 
 public static void Run(EventHubMessage eventHubMessage, TraceWriter log)
 {
