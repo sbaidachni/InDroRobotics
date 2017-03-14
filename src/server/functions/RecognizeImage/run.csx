@@ -48,7 +48,9 @@ public static async void Run(EventHubMessage eventHubMessage, TraceWriter log)
         var list=ReadIrisMetadataFromDb(connection, log);
         foreach(var p in list) 
         {
-            log.Info($"{nameof(IrisMetadata.Uri)}: {p.ProjectId}");
+            log.Info($"{nameof(IrisMetadata.Uri)}: {p.Blob.URI}");
+            log.Info(p.Uri);
+            log.Info(p.ProjectId);
 
             try
             {
