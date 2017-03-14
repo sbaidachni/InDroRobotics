@@ -76,7 +76,7 @@ public static async void Run(EventHubMessage eventHubMessage, TraceWriter log)
                         log.Info($"{nameof(evaluation.Class)} {evaluation.Class}");
                         log.Info($"{nameof(evaluation.Probability)} {evaluation.Probability}");
 
-                        if (evaluation.Class != "Other")
+                        if ((evaluation.Class != "Other")&&(evaluation.Probability>0.75))
                         {
                             InsertIrisEvaluationIntoDb(imageId, evaluation);
                         }
