@@ -61,12 +61,23 @@ public static async void Run(EventHubMessage eventHubMessage, TraceWriter log)
                 string body = $"{{\"Url\": \"{u}\"}}";
                 byte[] byteData = Encoding.UTF8.GetBytes(body);
 
+
                 using (var content = new ByteArrayContent(byteData))
                 {
                     content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                    var t=await client.PostAsync(p.Uri, content);   
-                    var strRes = await t.Content.ReadAsStringAsync();
-                    log.Info(strRes);  
+                    var t=client.PostAsync("https://customvisionppe.azure-api.net/v1.0/Prediction/66f494b3-a393-47f9-8d9a-7bc9e8d1399c/url?iterationId=7373f13c-4871-4f07-898c-3bf1ee22a02e", content);
+                    t.Wait();
+                    var t1 = t.Result.Content.ReadAsStringAsync();
+                    t1.Wait();
+                    log.Info(t1.Result);
+                }
+
+                //using (var content = new ByteArrayContent(byteData))
+                {
+                  //  content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                    //var t=await client.PostAsync(p.Uri, content);   
+                    //var strRes = await t.Content.ReadAsStringAsync();
+                    //log.Info(strRes);  
                  /*
                 var irisResult = endpoint.EvaluateImage(stream);
                 irisResult.Classifications.ToList().ForEach(evaluation =>
