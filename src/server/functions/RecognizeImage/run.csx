@@ -47,13 +47,12 @@ public static async void Run(EventHubMessage eventHubMessage, TraceWriter log)
         var list=ReadIrisMetadataFromDb(connection, log);
         foreach(var p in list) 
         {
-            log.Info($"{nameof(IrisMetadata.Uri)}: {p.Uri}");
+            log.Info($"{nameof(IrisMetadata.Uri)}: {p.ProjectId}");
 
             try
             {
                 HttpClient client = new HttpClient();
                 client.DefaultRequestHeaders.Add("Prediction-Key", p.ProjectId);
-                client.DefaultRequestHeaders.Add("Content-Type", "application/octet-stream");
 
                 using (var content = new ByteArrayContent(image))
                 {
