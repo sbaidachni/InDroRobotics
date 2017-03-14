@@ -1,6 +1,7 @@
 #r "System.Data"
 #r "Iris.SDK.Evaluation.dll"
 #r "Microsoft.Rest.ClientRuntime.dll"
+#r "Newtonsoft.Json"
 
 // 8.0.1 for net45
 #r "Microsoft.WindowsAzure.Storage.dll"
@@ -79,7 +80,7 @@ public static async void Run(EventHubMessage eventHubMessage, TraceWriter log)
                         {
                             InsertIrisEvaluationIntoDb(connection, imageId, evaluation, log);
                         }
-                    });       
+                    }       
                 }
             }
             catch(Exception ex)
