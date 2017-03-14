@@ -78,7 +78,7 @@ public static async void Run(EventHubMessage eventHubMessage, TraceWriter log)
 
                         if (evaluation.Class != "Other")
                         {
-                            InsertIrisEvaluationIntoDb(connection, imageId, evaluation, log);
+                            //InsertIrisEvaluationIntoDb(connection, imageId, evaluation, log);
                         }
                     }       
                 }
@@ -200,7 +200,6 @@ public class IrisMetadata
 
         public string Iteration { get; set; }
 
-        [JsonProperty(PropertyName ="Classifications")]
         public List<Classification> Classifications { get; set; }
     }
 
