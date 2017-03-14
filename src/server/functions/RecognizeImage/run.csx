@@ -56,7 +56,9 @@ public static async void Run(EventHubMessage eventHubMessage, TraceWriter log)
             {
                 HttpClient client = new HttpClient();
                 client.DefaultRequestHeaders.Add("Prediction-Key", p.ProjectId);
-                string body=$"{{\"Url\": \"{eventHubMessage.BlobURI}\"}}";
+                //string body=$"{{\"Url\": \"{eventHubMessage.BlobURI}\"}}";
+                string u = "https://indrobuildstorage.blob.core.windows.net/images/droneOne_2017_3_13_13_34_13.JPG";
+                string body = $"{{\"Url\": \"{u}\"}}";
                 byte[] byteData = Encoding.UTF8.GetBytes(body);
 
                 using (var content = new ByteArrayContent(byteData))
