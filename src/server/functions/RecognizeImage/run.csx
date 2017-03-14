@@ -53,6 +53,7 @@ public static async void Run(EventHubMessage eventHubMessage, TraceWriter log)
             {
                 HttpClient client = new HttpClient();
                 client.DefaultRequestHeaders.Add("Prediction-Key", p.ProjectId);
+                client.DefaultRequestHeaders.Add("Content-Type", "application/octet-stream");
 
                 using (var content = new ByteArrayContent(image))
                 {
