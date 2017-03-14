@@ -23,7 +23,7 @@ using System.Net.Http.Headers;
 private static string ConnString = "";
 private static string ImageRepository = "";
 
-public static void Run(EventHubMessage eventHubMessage, TraceWriter log)
+public static async void Run(EventHubMessage eventHubMessage, TraceWriter log)
 {
     ConnString = System.Environment.GetEnvironmentVariable("ConnString", EnvironmentVariableTarget.Process);
     ImageRepository = System.Environment.GetEnvironmentVariable("ImageRepository", EnvironmentVariableTarget.Process);
