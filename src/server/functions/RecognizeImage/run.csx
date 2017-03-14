@@ -14,6 +14,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Iris;
+using System.Text;
 using Iris.SDK;
 using Iris.SDK.Models;
 using Iris.SDK.Evaluation;
@@ -53,7 +54,7 @@ public static async void Run(EventHubMessage eventHubMessage, TraceWriter log)
             {
                 HttpClient client = new HttpClient();
                 client.DefaultRequestHeaders.Add("Prediction-Key", p.ProjectId);
-                string body=$"{{\"Url\": \"{eventHubMessage.BlobURI}\"}";
+                string body=$"{{\"Url\": \"{eventHubMessage.BlobURI}\"}}";
                 byte[] byteData = Encoding.UTF8.GetBytes(body);
 
                 using (var content = new ByteArrayContent(byteData))
