@@ -53,10 +53,12 @@ public static async void Run(EventHubMessage eventHubMessage, TraceWriter log)
             {
                 HttpClient client = new HttpClient();
                 client.DefaultRequestHeaders.Add("Prediction-Key", p.ProjectId);
+                string body=$"{{\"Url\": \"{eventHubMessage.BlobURI}\"}";
+                byte[] byteData = Encoding.UTF8.GetBytes(body);
 
-                using (var content = new ByteArrayContent(image))
+                using (var content = new ByteArrayContent(byteData))
                 {
-                    content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+                    content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                     var t=await client.PostAsync(p.Uri, content);   
                     var strRes = await t.Content.ReadAsStringAsync();
                     log.Info(strRes);  
