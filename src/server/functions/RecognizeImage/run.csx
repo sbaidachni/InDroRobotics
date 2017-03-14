@@ -58,7 +58,7 @@ public static async void Run(EventHubMessage eventHubMessage, TraceWriter log)
                 {
                     content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
                     var t=await client.PostAsync(p.Uri, content);   
-                    var strRes = t.Content.ReadAsStringAsync();
+                    var strRes = await t.Content.ReadAsStringAsync();
                     log.Info(strRes);  
                  /*
                 var irisResult = endpoint.EvaluateImage(stream);
