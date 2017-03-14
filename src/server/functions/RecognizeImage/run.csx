@@ -44,7 +44,7 @@ public static async void Run(EventHubMessage eventHubMessage, TraceWriter log)
         connection.Open();
 
         var imageId = InsertImagesIntoDb(connection, eventHubMessage, log);
-        ReadIrisMetadataFromDb(connection, log).ForEach(p =>
+        ReadIrisMetadataFromDb(connection, log).ForEach(p => async
         {
             log.Info($"{nameof(IrisMetadata.Uri)}: {p.Uri}");
 
