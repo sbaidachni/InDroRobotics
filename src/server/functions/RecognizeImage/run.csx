@@ -65,7 +65,7 @@ public static async void Run(EventHubMessage eventHubMessage, TraceWriter log)
                 using (var content = new ByteArrayContent(byteData))
                 {
                     content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                    var t=client.PostAsync("https://customvisionppe.azure-api.net/v1.0/Prediction/66f494b3-a393-47f9-8d9a-7bc9e8d1399c/url?iterationId=7373f13c-4871-4f07-898c-3bf1ee22a02e", content);
+                    var t=client.PostAsync(p.Uri, content);
                     t.Wait();
                     var t1 = t.Result.Content.ReadAsStringAsync();
                     t1.Wait();
