@@ -201,7 +201,7 @@ public class IrisMetadata
         public string Iteration { get; set; }
 
         [JsonProperty(PropertyName ="Classifications")]
-        List<Classification> Classifications { get; set; }
+        public List<Classification> Classifications { get; set; }
     }
 
     public class Classification
