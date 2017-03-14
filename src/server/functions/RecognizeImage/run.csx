@@ -78,7 +78,7 @@ public static async void Run(EventHubMessage eventHubMessage, TraceWriter log)
 
                         if (evaluation.Class != "Other")
                         {
-                            //InsertIrisEvaluationIntoDb(connection, imageId, evaluation, log);
+                            InsertIrisEvaluationIntoDb(imageId, evaluation);
                         }
                     }       
                 }
@@ -119,26 +119,27 @@ private static List<IrisMetadata> ReadIrisMetadataFromDb(
 }
 
 private static void InsertIrisEvaluationIntoDb(
-        SqlConnection connection,
         string imageId,
-        Classification imageClassEvaluation,
-        TraceWriter log)
+        Classification imageClassEvaluation)
 {
-    const string query = @"
-        insert into iris_images (objectName, accuracy, imageId) 
-        values (@objectName, @accuracy, @imageId)";
-
-    var insertIrisEval = new SqlCommand(query, connection);
-
-    insertIrisEval.Parameters.AddRange(new SqlParameter[]
+    using (var conn = new SqlConnection(ConnString))
     {
-        new SqlParameter("imageId", imageId),
-        new SqlParameter("objectName", imageClassEvaluation.Class),
-        new SqlParameter("accuracy", imageClassEvaluation.Probability)});
+        conn.Open();
+        const string query = @"
+            insert into iris_images (objectName, accuracy, imageId) 
+            values (@objectName, @accuracy, @imageId)";
 
-    var result = insertIrisEval.ExecuteNonQuery();
+        var insertIrisEval = new SqlCommand(query, conn);
 
-    log.Info($"{query}: {result}");
+        insertIrisEval.Parameters.AddRange(new SqlParameter[]
+        {
+            new SqlParameter("imageId", imageId),
+            new SqlParameter("objectName", imageClassEvaluation.Class),
+            new SqlParameter("accuracy", imageClassEvaluation.Probability)});
+
+        insertIrisEval.ExecuteNonQuery();
+        conn.Close();
+    }
 }
 
 private static string InsertImagesIntoDb(
