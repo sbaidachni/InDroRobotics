@@ -56,28 +56,16 @@ public static async void Run(EventHubMessage eventHubMessage, TraceWriter log)
             {
                 HttpClient client = new HttpClient();
                 client.DefaultRequestHeaders.Add("Prediction-Key", p.ProjectId);
-                //string body=$"{{\"Url\": \"{eventHubMessage.BlobURI}\"}}";
-                string u = "https://indrobuildstorage.blob.core.windows.net/images/droneOne_2017_3_13_13_34_13.JPG";
+ 
                 string body = $"{{\"Url\": \"{eventHubMessage.BlobURI}\"}}";
                 byte[] byteData = Encoding.UTF8.GetBytes(body);
-
 
                 using (var content = new ByteArrayContent(byteData))
                 {
                     content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                    var t=client.PostAsync(p.Uri, content);
-                    t.Wait();
-                    var t1 = t.Result.Content.ReadAsStringAsync();
-                    t1.Wait();
-                    log.Info(t1.Result);
-                }
-
-                //using (var content = new ByteArrayContent(byteData))
-                {
-                  //  content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                    //var t=await client.PostAsync(p.Uri, content);   
-                    //var strRes = await t.Content.ReadAsStringAsync();
-                    //log.Info(strRes);  
+                    var t=await client.PostAsync(p.Uri, content);   
+                    var strRes = await t.Content.ReadAsStringAsync();
+                    log.Info(strRes);  
                  /*
                 var irisResult = endpoint.EvaluateImage(stream);
                 irisResult.Classifications.ToList().ForEach(evaluation =>
