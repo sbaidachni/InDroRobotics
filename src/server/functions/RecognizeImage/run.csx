@@ -48,6 +48,8 @@ public static async void Run(EventHubMessage eventHubMessage, TraceWriter log)
         {
             log.Info($"{nameof(IrisMetadata.Uri)}: {p.Uri}");
 
+try
+{
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Add("Prediction-Key", p.ProjectId);
 
@@ -74,6 +76,11 @@ public static async void Run(EventHubMessage eventHubMessage, TraceWriter log)
                     }
                 });*/       
             }
+}
+catch(Exception ex)
+{
+    log.Info(ex.Message);
+}
 
 
         });
