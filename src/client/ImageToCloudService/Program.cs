@@ -8,6 +8,7 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ImageToCloudService
@@ -92,6 +93,8 @@ namespace ImageToCloudService
                         Console.WriteLine("Sent message to IoT");
 
                         f.Delete();
+
+                        Thread.Sleep(15000);
                     }
                     catch (System.IO.IOException e)
                     {
