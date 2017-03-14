@@ -44,7 +44,7 @@ public static async void Run(EventHubMessage eventHubMessage, TraceWriter log)
         connection.Open();
 
         var imageId = InsertImagesIntoDb(connection, eventHubMessage, log);
-        ReadIrisMetadataFromDb(connection, log).ForEach(p => async ()
+        ReadIrisMetadataFromDb(connection, log).ForEach(p => 
         {
             log.Info($"{nameof(IrisMetadata.Uri)}: {p.Uri}");
 
@@ -54,9 +54,12 @@ public static async void Run(EventHubMessage eventHubMessage, TraceWriter log)
             using (var content = new ByteArrayContent(image))
             {
                  content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
-                 var t=await client.PostAsync(p.Uri, content);
-                 var strResult=await t.Content.ReadAsStringAsync();
-                 log.Info(strResult);  
+                 var t=client.PostAsync(p.Uri, content);
+                 t.Wait();
+                 var t1 = t.Result.Content.ReadAsStringAsync();
+                 t1.Wait();
+                 
+                 log.Info(t1.Result);  
                  /*
                 var irisResult = endpoint.EvaluateImage(stream);
                 irisResult.Classifications.ToList().ForEach(evaluation =>
