@@ -79,7 +79,7 @@ try
 }
 catch(Exception ex)
 {
-    log.Info(ex.StackTrace);
+    log.Info(ex.InnerException.Message);
 }
 
 
