@@ -44,24 +44,22 @@ public static async void Run(EventHubMessage eventHubMessage, TraceWriter log)
         connection.Open();
 
         var imageId = InsertImagesIntoDb(connection, eventHubMessage, log);
-        ReadIrisMetadataFromDb(connection, log).ForEach(p => 
+        var list=ReadIrisMetadataFromDb(connection, log);
+        foreach(var p in list) 
         {
             log.Info($"{nameof(IrisMetadata.Uri)}: {p.Uri}");
 
-try
-{
-            HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Add("Prediction-Key", p.ProjectId);
-
-            using (var content = new ByteArrayContent(image))
+            try
             {
-                 content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
-                 var t=client.PostAsync(p.Uri, content);
-                 t.Wait();
-                 var t1 = t.Result.Content.ReadAsStringAsync();
-                 t1.Wait();
-                 
-                 log.Info(t1.Result);  
+                HttpClient client = new HttpClient();
+                client.DefaultRequestHeaders.Add("Prediction-Key", p.ProjectId);
+
+                using (var content = new ByteArrayContent(image))
+                {
+                    content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+                    var t=await client.PostAsync(p.Uri, content);   
+                    var strRes = t.Content.ReadAsStringAsync();
+                    log.Info(strRes);  
                  /*
                 var irisResult = endpoint.EvaluateImage(stream);
                 irisResult.Classifications.ToList().ForEach(evaluation =>
@@ -75,15 +73,13 @@ try
                         InsertIrisEvaluationIntoDb(connection, imageId, evaluation, log);
                     }
                 });*/       
+                }
             }
-}
-catch(Exception ex)
-{
-    log.Info(ex.InnerException.Message);
-}
-
-
-        });
+            catch(Exception ex)
+            {
+                log.Info(ex.InnerException.StackTrace);
+            }
+        }
     }
 }
 
